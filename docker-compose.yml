@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  dojmark-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+    volumes:
+      - ./.env.local:/app/.env.local:ro
+    restart: unless-stopped
+    networks:
+      - dojmark-network
+
+networks:
+  dojmark-network:
+    driver: bridge
+
+volumes:
+  dojmark-data:
