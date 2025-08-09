@@ -37,6 +37,12 @@
   border-color: hsl(var(--border));
 }
 
+/* Loading spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
   body {
     background-color: white;
     color: #1E2026;
