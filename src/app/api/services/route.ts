@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { getAllServices } from '@/lib/cms';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const dynamic = 'force-static';
+export const revalidate = false;
 
 export async function GET(request: NextRequest) {
   try {
@@ -69,16 +69,16 @@ export async function GET(request: NextRequest) {
       // CMS error, fall back to mock data
     }
 
-    // Return enhanced mock data as fallback
+    // Return services data that matches database
     const mockServices = [
       {
         id: 'web-development',
         slug: 'web-development',
         name: 'Web Development',
         description: 'Custom websites and web applications built with modern technologies for optimal performance and user experience.',
-        short_description: 'Custom websites & web apps',
-        price_range: '$3,000 - $15,000',
-        features: ['Responsive Design', 'Modern Tech Stack', 'SEO Optimized', 'Performance Focused', 'CMS Integration', 'Analytics Setup'],
+        short_description: 'Custom websites and web apps',
+        price_range: '3k-10k',
+        features: ['Responsive Design', 'SEO Optimization', 'Performance Optimized', 'Mobile-First', 'Analytics Integration'],
         category: 'development',
         is_featured: true,
         sort_order: 1,
@@ -86,28 +86,28 @@ export async function GET(request: NextRequest) {
         updated_at: new Date().toISOString(),
       },
       {
-        id: 'brand-identity',
-        slug: 'brand-identity',
-        name: 'Brand Identity',
-        description: 'Complete brand identity packages including logo design, color palettes, typography, and brand guidelines.',
-        short_description: 'Logo design & brand guidelines',
-        price_range: '$1,500 - $5,000',
-        features: ['Logo Design', 'Brand Guidelines', 'Color Palette', 'Typography', 'Business Cards', 'Brand Assets'],
-        category: 'design',
+        id: 'digital-marketing',
+        slug: 'digital-marketing',
+        name: 'Digital Marketing',
+        description: 'Comprehensive digital marketing strategies including SEO, social media, content marketing, and paid advertising.',
+        short_description: 'Complete digital marketing solutions',
+        price_range: '1k-5k',
+        features: ['SEO Strategy', 'Social Media Management', 'Content Creation', 'PPC Advertising', 'Analytics Reporting'],
+        category: 'marketing',
         is_featured: true,
         sort_order: 2,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       },
       {
-        id: 'content-creation',
-        slug: 'content-creation',
-        name: 'Content Creation',
-        description: 'Strategic content creation for social media, blogs, and marketing materials that engage your audience.',
-        short_description: 'Social media & marketing content',
-        price_range: '$800 - $3,000/month',
-        features: ['Social Media Posts', 'Blog Writing', 'Marketing Copy', 'Content Strategy', 'Brand Voice', 'Content Calendar'],
-        category: 'marketing',
+        id: 'brand-identity',
+        slug: 'brand-identity',
+        name: 'Brand Identity',
+        description: 'Complete brand identity design including logos, color schemes, typography, and brand guidelines.',
+        short_description: 'Professional brand identity design',
+        price_range: '1k-3k',
+        features: ['Logo Design', 'Brand Guidelines', 'Color Palette', 'Typography', 'Business Cards'],
+        category: 'design',
         is_featured: true,
         sort_order: 3,
         created_at: new Date().toISOString(),
@@ -117,10 +117,10 @@ export async function GET(request: NextRequest) {
         id: 'photography',
         slug: 'photography',
         name: 'Photography',
-        description: 'Professional photography services for events, products, portraits, and commercial use.',
-        short_description: 'Event, product & commercial photography',
-        price_range: '$500 - $3,000/session',
-        features: ['Event Photography', 'Product Photography', 'Portrait Sessions', 'Commercial Photography', 'Photo Editing', 'High-Resolution Delivery'],
+        description: 'Professional photography services for events, corporate, product, and portrait photography.',
+        short_description: 'Professional photography services',
+        price_range: 'under-1k',
+        features: ['Event Photography', 'Corporate Headshots', 'Product Photography', 'Portrait Sessions', 'Photo Editing'],
         category: 'media',
         is_featured: false,
         sort_order: 4,
@@ -128,13 +128,13 @@ export async function GET(request: NextRequest) {
         updated_at: new Date().toISOString(),
       },
       {
-        id: 'videography',
-        slug: 'videography',
-        name: 'Videography',
-        description: 'High-quality video production for marketing, events, and promotional content.',
-        short_description: 'Marketing & promotional videos',
-        price_range: '$1,000 - $5,000/project',
-        features: ['Marketing Videos', 'Event Coverage', 'Promotional Content', 'Video Editing', 'Motion Graphics', '4K Quality'],
+        id: 'video-production',
+        slug: 'video-production',
+        name: 'Video Production',
+        description: 'Complete video production services from concept to final delivery for marketing and promotional content.',
+        short_description: 'Professional video production',
+        price_range: '3k-10k',
+        features: ['Script Writing', 'Video Shooting', 'Post-Production', 'Motion Graphics', 'YouTube Optimization'],
         category: 'media',
         is_featured: false,
         sort_order: 5,
@@ -142,14 +142,14 @@ export async function GET(request: NextRequest) {
         updated_at: new Date().toISOString(),
       },
       {
-        id: 'digital-strategy',
-        slug: 'digital-strategy',
-        name: 'Digital Strategy',
-        description: 'Comprehensive digital marketing strategy and consulting to grow your online presence.',
-        short_description: 'Marketing strategy & consulting',
-        price_range: '$2,000 - $8,000',
-        features: ['Market Analysis', 'Strategy Development', 'Competitor Research', 'Growth Planning', 'Performance Metrics', 'Ongoing Consulting'],
-        category: 'consulting',
+        id: 'content-strategy',
+        slug: 'content-strategy',
+        name: 'Content Strategy',
+        description: 'Strategic content planning and creation for blogs, social media, and marketing campaigns.',
+        short_description: 'Strategic content planning',
+        price_range: '1k-3k',
+        features: ['Content Planning', 'Blog Writing', 'Social Media Content', 'Email Campaigns', 'Content Calendar'],
+        category: 'marketing',
         is_featured: false,
         sort_order: 6,
         created_at: new Date().toISOString(),
