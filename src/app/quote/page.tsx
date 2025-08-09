@@ -89,21 +89,48 @@ function QuotePageContent() {
 
   // Load services and prefill service from URL
   useEffect(() => {
-    const loadServices = async () => {
-      try {
-        const response = await fetch('/api/services');
-        if (response.ok) {
-          const data = await response.json();
-          setServices(data.services || []);
-        }
-      } catch (error) {
-        console.error('Failed to load services:', error);
-      } finally {
-        setIsLoadingServices(false);
+    // Use hardcoded services data since API routes don't work with static export
+    const staticServices: Service[] = [
+      {
+        slug: 'web-development',
+        name: 'Web Development',
+        short_description: 'Custom websites and web apps',
+        price_range: '3k-10k'
+      },
+      {
+        slug: 'digital-marketing',
+        name: 'Digital Marketing',
+        short_description: 'Complete digital marketing solutions',
+        price_range: '1k-5k'
+      },
+      {
+        slug: 'brand-identity',
+        name: 'Brand Identity',
+        short_description: 'Professional brand identity design',
+        price_range: '1k-3k'
+      },
+      {
+        slug: 'photography',
+        name: 'Photography',
+        short_description: 'Professional photography services',
+        price_range: 'under-1k'
+      },
+      {
+        slug: 'video-production',
+        name: 'Video Production',
+        short_description: 'Professional video production',
+        price_range: '3k-10k'
+      },
+      {
+        slug: 'content-strategy',
+        name: 'Content Strategy',
+        short_description: 'Strategic content planning',
+        price_range: '1k-3k'
       }
-    };
+    ];
 
-    loadServices();
+    setServices(staticServices);
+    setIsLoadingServices(false);
 
     // Prefill service from URL parameter
     const serviceParam = searchParams?.get('service');
@@ -567,7 +594,7 @@ function QuotePageContent() {
                       <option value="">Select a service...</option>
                       {services.map((service) => (
                         <option key={service.slug} value={service.slug}>
-                          {service.name} ({service.price_range})
+                          {service.name}
                         </option>
                       ))}
                     </select>
