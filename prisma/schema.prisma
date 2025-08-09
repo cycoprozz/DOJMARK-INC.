@@ -1,32 +1,339 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// Users table for authentication and client management
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      UserRole @default(CLIENT)
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  // Relations
+  clientProfile Client?
+  projects      Project[]
+  messages      Message[]
+
+  @@index([email])
+  @@index([createdAt])
+  @@map("users")
 }
 
-model Post {
+enum UserRole {
+  CLIENT
+  ADMIN
+  TEAM_MEMBER
+}
+
+// Client organizations
+model Client {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  orgName       String?
+  phone         String?
+  address       String?
+  website       String?
+  industry      String?
+  crmContactId  String?   @unique
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now()) @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @db.Timestamptz
+
+  // Relations
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects      Project[]
+  invoices      Invoice[]
+
+  @@index([orgName])
+  @@index([crmContactId])
+  @@map("clients")
+}
+
+// Projects management
+model Project {
+  id           String        @id @default(cuid())
+  clientId     String
+  userId       String
+  title        String
+  description  String?
+  stage        ProjectStage  @default(DISCOVERY)
+  priority     Priority      @default(MEDIUM)
+  budget       Decimal?      @db.Decimal(10, 2)
+  currency     String        @default("USD")
+  startDate    DateTime?     @db.Date
+  dueDate      DateTime?     @db.Date
+  completedAt  DateTime?     @db.Timestamptz
+  briefJson    Json?
+  crmDealId    String?       @unique
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now()) @db.Timestamptz
+  updatedAt    DateTime      @updatedAt @db.Timestamptz
+
+  // Relations
+  client       Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [userId], references: [id])
+  files        File[]
+  messages     Message[]
+  invoices     Invoice[]
+  tasks        Task[]
+
+  @@index([clientId])
+  @@index([userId])
+  @@index([stage])
+  @@index([dueDate])
+  @@index([crmDealId])
+  @@map("projects")
+}
+
+enum ProjectStage {
+  DISCOVERY
+  DESIGN
+  BUILD
+  REVIEW
+  DELIVER
+  COMPLETED
+  ON_HOLD
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+// File management with versioning
+model File {
+  id           String       @id @default(cuid())
+  projectId    String
+  name         String
+  path         String       @unique
+  size         BigInt
+  mimeType     String
+  version      Int          @default(1)
+  kind         FileKind
+  status       FileStatus   @default(PENDING)
+  isWatermarked Boolean     @default(false)
+  metaJson     Json?
+  uploadedBy   String?
+  createdAt    DateTime     @default(now()) @db.Timestamptz
+  updatedAt    DateTime     @updatedAt @db.Timestamptz
+
+  // Relations
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  comments     FileComment[]
+
+  @@index([projectId])
+  @@index([status])
+  @@index([kind])
+  @@index([createdAt])
+  @@map("files")
+}
+
+enum FileKind {
+  DESIGN
+  ASSET
+  DOCUMENT
+  VIDEO
+  IMAGE
+  OTHER
+}
+
+enum FileStatus {
+  PENDING
+  APPROVED
+  REVISION_REQUESTED
+  ARCHIVED
+}
+
+// File comments and feedback
+model FileComment {
   id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
+  fileId    String
   authorId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  content   String
+  xPosition Float?
+  yPosition Float?
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  // Relations
+  file      File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@index([fileId])
+  @@index([createdAt])
+  @@map("file_comments")
+}
+
+// Messaging system
+model Message {
+  id         String      @id @default(cuid())
+  projectId  String
+  authorId   String
+  content    String
+  authorRole UserRole
+  isRead     Boolean     @default(false)
+  attachments Json?
+  createdAt  DateTime    @default(now()) @db.Timestamptz
+
+  // Relations
+  project    Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  author     User        @relation(fields: [authorId], references: [id])
+
+  @@index([projectId])
+  @@index([authorId])
+  @@index([createdAt])
+  @@map("messages")
+}
+
+// Invoice and payment management
+model Invoice {
+  id               String        @id @default(cuid())
+  projectId        String
+  clientId         String
+  invoiceNumber    String        @unique
+  amount           Decimal       @db.Decimal(10, 2)
+  currency         String        @default("USD")
+  status           InvoiceStatus @default(DRAFT)
+  description      String?
+  lineItems        Json?
+  taxAmount        Decimal?      @db.Decimal(10, 2)
+  stripeInvoiceId  String?       @unique
+  stripePaymentId  String?       @unique
+  dueDate          DateTime?     @db.Date
+  paidAt           DateTime?     @db.Timestamptz
+  createdAt        DateTime      @default(now()) @db.Timestamptz
+  updatedAt        DateTime      @updatedAt @db.Timestamptz
+
+  // Relations
+  project          Project       @relation(fields: [projectId], references: [id])
+  client           Client        @relation(fields: [clientId], references: [id])
+
+  @@index([clientId])
+  @@index([projectId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([stripeInvoiceId])
+  @@map("invoices")
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+// Task management
+model Task {
+  id          String     @id @default(cuid())
+  projectId   String
+  title       String
+  description String?
+  status      TaskStatus @default(TODO)
+  priority    Priority   @default(MEDIUM)
+  assignedTo  String?
+  dueDate     DateTime?  @db.Date
+  completedAt DateTime?  @db.Timestamptz
+  createdAt   DateTime   @default(now()) @db.Timestamptz
+  updatedAt   DateTime   @updatedAt @db.Timestamptz
+
+  // Relations
+  project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([status])
+  @@index([assignedTo])
+  @@index([dueDate])
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+}
+
+// Newsletter subscriptions
+model Newsletter {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  name       String?
+  isActive   Boolean  @default(true)
+  source     String?  // Where they signed up
+  tags       String[] // Categories of interest
+  createdAt  DateTime @default(now()) @db.Timestamptz
+  updatedAt  DateTime @updatedAt @db.Timestamptz
+
+  @@index([email])
+  @@index([isActive])
+  @@map("newsletter_subscribers")
+}
+
+// Contact form submissions
+model ContactForm {
+  id              String   @id @default(cuid())
+  name            String
+  email           String
+  phone           String?
+  company         String?
+  serviceInterest String?
+  budget          String?
+  message         String
+  status          String   @default("new") // new, contacted, converted, closed
+  source          String?  // Where they came from
+  createdAt       DateTime @default(now()) @db.Timestamptz
+  updatedAt       DateTime @updatedAt @db.Timestamptz
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+  @@map("contact_forms")
+}
+
+// Analytics events
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  eventType String   // page_view, form_submit, download, etc.
+  eventData Json?
+  userAgent String?
+  ipAddress String?
+  referrer  String?
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("analytics_events")
+}
+
+// Testimonials
+model Testimonial {
+  id         String   @id @default(cuid())
+  clientName String
+  company    String?
+  role       String?
+  content    String
+  rating     Int      @default(5)
+  projectId  String?
+  isApproved Boolean  @default(false)
+  isFeatured Boolean  @default(false)
+  avatar     String?
+  createdAt  DateTime @default(now()) @db.Timestamptz
+  updatedAt  DateTime @updatedAt @db.Timestamptz
+
+  @@index([isApproved])
+  @@index([isFeatured])
+  @@index([rating])
+  @@map("testimonials")
 }

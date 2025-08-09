@@ -1,47 +1,48 @@
-# 🚀 DOJMARK - Black-Forward Digital Content Creation Website
+# DOJMARK - Black Excellence in Digital Creation
 
-A modern, responsive full-stack website for DOJMARK, a Black-centered digital content creation agency specializing in custom website design, product development, brand content creation, and full business launch kits.
+A Black-centered digital content creation agency specializing in custom website design, product development, brand content creation, and full business launch kits for underrepresented businesses.
 
-## ✨ Technology Stack
+## 🚀 Features
 
-### 🎯 Core Framework
-- **⚡ Next.js 15** - The React framework for production with App Router
-- **📘 TypeScript 5** - Type-safe JavaScript for better developer experience
-- **🎨 Tailwind CSS 4** - Utility-first CSS framework for rapid UI development
+- **Modern Next.js 15 Architecture**: Built with the latest Next.js features for optimal performance
+- **Responsive Design**: Mobile-first approach ensuring great experience across all devices
+- **Supabase Integration**: Ready for database operations with fallback to demo mode
+- **Socket.IO Support**: Real-time functionality for enhanced user interactions
+- **Complete Business Pages**: Home, Services, Portfolio, About, Blog, and Contact pages
+- **API Routes**: Full backend API for contact forms, consultations, newsletter, and more
+- **TypeScript**: Full type safety throughout the application
+- **Tailwind CSS**: Utility-first CSS framework for rapid development
+- **shadcn/ui Components**: High-quality, accessible UI components
 
-### 🧩 UI Components & Styling
-- **🧩 shadcn/ui** - High-quality, accessible components built on Radix UI
-- **🎯 Lucide React** - Beautiful & consistent icon library
+## 🏗️ Project Structure
 
-### 🐳 Containerization & Deployment
-- **🐳 Docker** - Containerized frontend for easy deployment
-- **🔄 Docker Compose** - Multi-container application orchestration
+```
+DOJMARK-INC./
+├── src/
+│   ├── app/
+│   │   ├── api/          # API routes
+│   │   ├── about/        # About page
+│   │   ├── blog/         # Blog page
+│   │   ├── contact/      # Contact page
+│   │   ├── portfolio/    # Portfolio page
+│   │   ├── services/     # Services page
+│   │   └── page.tsx      # Home page
+│   ├── components/
+│   │   ├── ui/           # Reusable UI components
+│   │   └── layout.tsx    # Main layout component
+│   ├── hooks/            # Custom React hooks
+│   └── lib/              # Utility functions and configurations
+├── public/               # Static assets
+├── prisma/              # Database schema
+└── supabase-schema.sql  # Supabase database schema
+```
 
-### 🗄️ Backend & Database
-- **🔥 Supabase** - Open source Firebase alternative with PostgreSQL database
-- **🔗 Supabase Client** - TypeScript client for Supabase
-
-## 🎨 Design Features
-
-- **🌍 Afro-futuristic Design** - Bold, sleek, and modern design with Afrocentric inspiration
-- **🎨 Color Palette** - Deep blacks, golds (#d4af37), bold reds (#c41e3a), lush greens (#2e8b57)
-- **📱 Mobile-First** - Responsive design optimized for all devices
-- **✨ Animations** - Scroll-triggered animations and content fade-ins
-- **🎯 Editorial Layout** - Professional, editorial-style layout
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+ 
-- Docker & Docker Compose
-- Supabase account and project
-
-### Setup Instructions
+## 🛠️ Installation
 
 1. **Clone the repository**
 ```bash
-git clone <repository-url>
-cd dojmark-website
+   git clone https://github.com/your-username/DOJMARK-INC.git
+   cd DOJMARK-INC.
 ```
 
 2. **Install dependencies**
@@ -51,210 +52,127 @@ npm install
 
 3. **Set up environment variables**
 ```bash
-cp .env.local.example .env.local
+   cp .env.example .env.local
 ```
 
-Edit `.env.local` and add your Supabase credentials:
+   Edit `.env.local` with your configuration:
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
-```
+   # Database Configuration
+   DATABASE_URL="file:./db/custom.db"
+   
+   # Supabase Configuration (Optional)
+   NEXT_PUBLIC_SUPABASE_URL="your_supabase_url_here"
+   NEXT_PUBLIC_SUPABASE_ANON_KEY="your_supabase_anon_key_here"
+   SUPABASE_SERVICE_ROLE_KEY="your_supabase_service_role_key_here"
+   ```
 
-4. **Set up Supabase database**
-- Create a new project in your Supabase dashboard
-- Run the SQL schema from `supabase-schema.sql` in the Supabase SQL editor
-- Set up Row Level Security (RLS) policies
-
-5. **Run with Docker Compose**
-```bash
-docker-compose up --build
-```
-
-6. **Or run locally**
+4. **Run the development server**
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the website.
+5. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-## 📁 Project Structure
+## 📊 Database Setup
 
-```
-src/
-├── app/                 # Next.js App Router pages
-│   ├── api/            # API routes
-│   │   ├── services/   # Services API
-│   │   ├── testimonials/ # Testimonials API
-│   │   ├── contact/    # Contact form API
-│   │   ├── consultation/ # Consultation booking API
-│   │   ├── newsletter/ # Newsletter subscription API
-│   │   ├── portfolio/  # Portfolio API
-│   │   ├── blog/       # Blog posts API
-│   │   └── analytics/  # Analytics tracking API
-│   ├── services/       # Services page
-│   └── page.tsx        # Home page
-├── components/          # Reusable React components
-│   ├── ui/             # shadcn/ui components
-│   └── layout.tsx      # Main layout component
-└── lib/                # Utility functions and configurations
-    ├── supabase.ts     # Supabase client configuration
-    └── utils.ts        # Utility functions
-```
+### Option 1: Supabase (Recommended)
+1. Create a new project at [supabase.com](https://supabase.com)
+2. Run the SQL schema from `supabase-schema.sql` in your Supabase SQL editor
+3. Add your Supabase credentials to `.env.local`
 
-## 🎨 Available Pages
-
-### 1. Home Page (`/`)
-- Hero section with call-to-action
-- Services overview
-- Client testimonials
-- Statistics section
-- Contact CTA
-
-### 2. Services Page (`/services`)
-- Detailed service descriptions
-- Feature lists for each service
-- Pricing information
-- Consultation booking CTA
-
-### API Endpoints
-
-### Services API
-- `GET /api/services` - Get all active services
-- `GET /api/services?featured=true` - Get featured services (limit 3)
-
-### Testimonials API
-- `GET /api/testimonials` - Get all approved testimonials
-- `GET /api/testimonials?featured=true` - Get featured testimonials
-- `POST /api/testimonials` - Submit new testimonial
-
-### Contact API
-- `POST /api/contact` - Submit contact form
-
-### Consultation API
-- `POST /api/consultation` - Book consultation
-
-### Newsletter API
-- `POST /api/newsletter` - Subscribe to newsletter
-- `DELETE /api/newsletter?email=...` - Unsubscribe from newsletter
-
-### Portfolio API
-- `GET /api/portfolio` - Get all portfolio items
-- `GET /api/portfolio?featured=true` - Get featured portfolio items
-
-### Blog API
-- `GET /api/blog` - Get all published blog posts
-- `GET /api/blog?slug=...` - Get specific blog post
-
-### Analytics API
-- `POST /api/analytics` - Track analytics events
-
-## 🗄️ Database Schema
-
-The application uses the following main tables:
-
-- `profiles` - User profile information
-- `services` - Service offerings
-- `portfolio` - Portfolio/project showcase
-- `testimonials` - Client testimonials
-- `blog_posts` - Blog articles
-- `contact_submissions` - Contact form submissions
-- `consultation_bookings` - Consultation bookings
-- `newsletter_subscriptions` - Newsletter subscribers
-- `analytics` - Analytics tracking data
-
-## 🐳 Docker Deployment
-
-### Building the Docker Image
+### Option 2: Prisma with SQLite (Local Development)
+1. Generate Prisma client:
+   ```bash
+   npm run db:generate
+   ```
+2. Push the schema to your database:
 ```bash
-docker build -t dojmark-frontend .
+   npm run db:push
 ```
 
-### Running with Docker Compose
+## 🚀 Deployment
+
+### Build for Production
 ```bash
-docker-compose up -d
-```
-
-### Environment Variables for Docker
-Create a `.env.local` file with your Supabase credentials. Docker Compose will automatically mount this file.
-
-## 🌍 Production Deployment
-
-### Vercel Deployment
-1. Connect your repository to Vercel
-2. Add environment variables in Vercel dashboard
-3. Deploy automatically on push
-
-### Other Platforms
-The Docker setup allows deployment to any platform that supports Docker containers:
-- AWS ECS
-- Google Cloud Run
-- DigitalOcean App Platform
-- Railway
-- Render
-
-## 🔧 Development Commands
-
-```bash
-# Development server
-npm run dev
-
-# Build for production
 npm run build
-
-# Start production server
 npm start
-
-# Run linter
-npm run lint
-
-# Docker commands
-docker-compose up --build    # Build and start containers
-docker-compose down         # Stop containers
-docker-compose logs -f      # View logs
 ```
+
+### Deploy to Vercel
+1. Connect your repository to Vercel
+2. Add environment variables in the Vercel dashboard
+3. Deploy!
+
+### Deploy with Docker
+```bash
+docker build -t dojmark .
+docker run -p 3000:3000 dojmark
+```
+
+## 📝 API Endpoints
+
+- `GET /api/health` - Health check
+- `POST /api/contact` - Contact form submission
+- `POST /api/consultation` - Consultation booking
+- `POST /api/newsletter` - Newsletter subscription
+- `GET /api/blog` - Fetch blog posts
+- `GET /api/portfolio` - Fetch portfolio items
+- `GET /api/services` - Fetch services
+- `GET /api/testimonials` - Fetch testimonials
+- `POST /api/analytics` - Track analytics events
 
 ## 🎨 Customization
 
-### Color Scheme
-The Afro-futuristic color palette is defined in `src/app/globals.css`:
-- Primary: Gold (#d4af37)
-- Secondary: Bold Red (#c41e3a)
-- Accent: Lush Green (#2e8b57)
-- Background: Black (#000000)
+### Brand Colors
+Edit the CSS variables in `src/app/globals.css` to match your brand:
 
-### Adding New Pages
-1. Create directory under `src/app/`
-2. Add `page.tsx` file
-3. Update navigation in `src/components/layout.tsx`
+```css
+:root {
+  --primary: #2563eb;     /* Blue */
+  --secondary: #64748b;   /* Gray */
+  --accent: #3b82f6;      /* Light Blue */
+}
+```
 
-### Adding New Services
-1. Add service to `services` table in Supabase
-2. The API will automatically fetch and display it
+### Services and Portfolio
+Update the mock data in the API routes or connect to your Supabase database to manage content dynamically.
+
+## 🔧 Development Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run db:push` - Push Prisma schema to database
+- `npm run db:generate` - Generate Prisma client
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🚀 About DOJMARK
+## 🙏 Acknowledgments
 
-DOJMARK is a Black-centered digital content creation agency based in the U.S. We specialize in:
-- Custom Website Design & Development
-- Product Development (especially for eCommerce & Dropshipping)
-- Brand Content Creation (photo, video, graphics, copy)
-- Social Media Integration
-- Full Business Launch Kits (Logo, Website, CRM setup, AI Automation)
+- Built with [Next.js](https://nextjs.org/)
+- UI components from [shadcn/ui](https://ui.shadcn.com/)
+- Icons from [Lucide React](https://lucide.dev/)
+- Styled with [Tailwind CSS](https://tailwindcss.com/)
+- Database powered by [Supabase](https://supabase.com/)
 
-Our mission is to provide excellence, innovation, and culturally fluent solutions for underrepresented businesses.
+## 📞 Contact
+
+DOJMARK Team - [hello@dojmark.com](mailto:hello@dojmark.com)
+
+Project Link: [https://github.com/your-username/DOJMARK-INC](https://github.com/your-username/DOJMARK-INC)
 
 ---
 
-Built with ❤️ for the DOJMARK community. 🚀
+**DOJMARK** - Empowering Black-owned businesses through digital excellence 🚀
