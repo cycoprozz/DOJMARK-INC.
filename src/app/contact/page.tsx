@@ -39,10 +39,63 @@ export default function Contact() {
     }));
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    // Form submitted
+    
+    if (!formData.name || !formData.email || !formData.message) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      // Import Supabase client for direct database submission
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        'https://smtwxamyxcxhxpjumoau.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtdHd4YW15eGN4aHhwanVtb2F1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3MTg5MTUsImV4cCI6MjA3MDI5NDkxNX0.Ph4UQy4tCVOp-gNoT8e1cBPXOeQODIcS3wqbBI769g0'
+      );
+
+      // Create or update lead in database
+      const { data: newLead, error: createError } = await supabase
+        .from('leads')
+        .upsert({
+          full_name: formData.name,
+          email: formData.email,
+          company: formData.company || null,
+          source: 'contact-form',
+        }, { onConflict: 'email' })
+        .select('id')
+        .single();
+
+      if (createError) throw createError;
+
+      setSubmitStatus('success');
+      alert('Thank you! Your message has been sent successfully. We\'ll get back to you soon!');
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        company: '',
+        service: '',
+        budget: '',
+        message: '',
+        timeline: ''
+      });
+      
+    } catch (error) {
+      console.error('Contact form submission error:', error);
+      setSubmitStatus('error');
+      alert('There was an error sending your message. Please try again or contact us directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -661,15 +714,16 @@ export default function Contact() {
                 {/* Submit Button */}
                 <button 
                   type="submit"
+                  disabled={isSubmitting}
                   style={{
                     width: '100%',
-                    background: '#F46A25',
+                    background: isSubmitting ? '#ccc' : '#F46A25',
                     color: '#ffffff',
                     padding: '18px 40px',
                     fontSize: '16px',
                     fontWeight: '600',
                     border: 'none',
-                    cursor: 'pointer',
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
                     textTransform: 'uppercase',
                     letterSpacing: '0.5px',
                     fontFamily: 'DM Sans, sans-serif',
@@ -679,15 +733,19 @@ export default function Contact() {
                     justifyContent: 'center'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#0F2C55';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    if (!isSubmitting) {
+                      e.currentTarget.style.background = '#0F2C55';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#F46A25';
-                    e.currentTarget.style.transform = 'translateY(0)';
+                    if (!isSubmitting) {
+                      e.currentTarget.style.background = '#F46A25';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }
                   }}
                 >
-                  Send Message
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
                   <Send style={{marginLeft: '10px', width: '18px', height: '18px'}} />
                 </button>
               </form>
