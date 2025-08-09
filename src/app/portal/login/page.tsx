@@ -13,29 +13,106 @@ export default function PortalLogin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email.trim()) {
+      alert('Please enter your email');
+      return;
+    }
+
+    if (authMode !== 'reset' && !password.trim()) {
+      alert('Please enter your password');
+      return;
+    }
+
     setIsLoading(true);
     
-    // TODO: Implement Supabase auth
-    // Log auth attempt in development only
-    if (process.env.NODE_ENV === 'development') {
-      // Auth attempt logged
-    }
-    
-    setTimeout(() => {
+    try {
+      // Validate environment variables
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseKey) {
+        throw new Error('Authentication service not configured');
+      }
+
+      // Import and create Supabase client
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      if (authMode === 'login') {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password: password
+        });
+
+        if (error) throw error;
+
+        if (data.user) {
+          // Successful login - redirect to portal
+          window.location.href = '/portal';
+        }
+      } else if (authMode === 'signup') {
+        const { data, error } = await supabase.auth.signUp({
+          email: email.trim(),
+          password: password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/portal`
+          }
+        });
+
+        if (error) throw error;
+
+        alert('Check your email for the confirmation link!');
+        setAuthMode('login');
+      } else if (authMode === 'reset') {
+        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+          redirectTo: `${window.location.origin}/portal/reset`
+        });
+
+        if (error) throw error;
+
+        alert('Password reset link sent to your email!');
+        setAuthMode('login');
+      }
+    } catch (error: any) {
+      console.error('Auth error:', error);
+      alert(error.message || 'Authentication failed. Please try again.');
+    } finally {
       setIsLoading(false);
-      // Mock successful login
-      localStorage.setItem('dojmark-session', JSON.stringify({
-        user: { email, id: '1' },
-        token: 'mock-token'
-      }));
-      // Redirect to /portal on success
-      window.location.href = '/portal';
-    }, 2000);
+    }
   };
 
-  const handleGoogleAuth = () => {
-    // TODO: Implement Google OAuth with Supabase
-    // Google auth action will be implemented
+  const handleGoogleAuth = async () => {
+    try {
+      // Validate environment variables
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseKey) {
+        throw new Error('Authentication service not configured');
+      }
+
+      // Import and create Supabase client
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/portal`
+        }
+      });
+
+      if (error) {
+        console.error('Google auth error:', error);
+        alert('Google sign-in failed. Please try again or use email login.');
+      }
+      
+      // Note: If successful, user will be redirected automatically
+    } catch (error: any) {
+      console.error('Google auth error:', error);
+      alert('Google sign-in is not available. Please use email login.');
+    }
   };
 
   return (
