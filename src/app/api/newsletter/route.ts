@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
+
+export const dynamic = 'force-static';
+export const revalidate = false;
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,7 +16,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // If Supabase is not configured, return a mock success response
+    if (!isSupabaseConfigured()) {
+      // Newsletter subscription (demo mode)
+      return NextResponse.json(
+        { message: 'Subscription successful (demo mode)', data: { id: 'demo-id', email, name } },
+        { status: 201 }
+      );
+    }
+
     // Check if email already exists
+    const supabaseAdmin = getSupabaseAdmin();
     const { data: existingSubscription } = await supabaseAdmin
       .from('newsletter_subscriptions')
       .select('id, status')
@@ -71,7 +84,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error subscribing to newsletter:', error);
+    // Error subscribing to newsletter
     return NextResponse.json(
       { error: 'Failed to subscribe to newsletter' },
       { status: 500 }
@@ -91,6 +104,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    const supabaseAdmin = getSupabaseAdmin();
     const { data, error } = await supabaseAdmin
       .from('newsletter_subscriptions')
       .update({ status: 'unsubscribed' })
@@ -109,7 +123,7 @@ export async function DELETE(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error unsubscribing from newsletter:', error);
+    // Error unsubscribing from newsletter
     return NextResponse.json(
       { error: 'Failed to unsubscribe from newsletter' },
       { status: 500 }

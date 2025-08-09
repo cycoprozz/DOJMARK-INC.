@@ -11,6 +11,21 @@ const config: Config = {
   theme: {
   	extend: {
   		colors: {
+  			// DOJMARK Brand Colors
+  			dojmark: {
+  				navy: '#0F2C55',
+  				orange: '#F46A25',
+  				white: '#FFFFFF',
+  				'light-gray': '#E6E9F0',
+  				'dark-graphite': '#1E2026',
+  				'accent-blue': '#22C4FF',
+  				'navy-light': 'rgba(15, 44, 85, 0.1)',
+  				'navy-medium': 'rgba(15, 44, 85, 0.8)',
+  				'orange-light': 'rgba(244, 106, 37, 0.1)',
+  				'orange-medium': 'rgba(244, 106, 37, 0.8)',
+  				'accent-blue-light': 'rgba(34, 196, 255, 0.1)',
+  			},
+  			// Default shadcn colors
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
+
+export const dynamic = 'force-static';
+export const revalidate = false;
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,6 +16,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // If Supabase is not configured, return a mock success response
+    if (!isSupabaseConfigured()) {
+      // Contact form submission (demo mode)
+      return NextResponse.json(
+        { message: 'Contact form submitted successfully (demo mode)', data: { id: 'demo-id', name, email } },
+        { status: 201 }
+      );
+    }
+
+    const supabaseAdmin = getSupabaseAdmin();
     const { data, error } = await supabaseAdmin
       .from('contact_submissions')
       .insert([
@@ -42,7 +55,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error submitting contact form:', error);
+    // Error submitting contact form
     return NextResponse.json(
       { error: 'Failed to submit contact form' },
       { status: 500 }

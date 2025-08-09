@@ -1,11 +1,21 @@
 import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+import { env, isEnvironmentConfigured } from './env'
 
 // Client for browser/frontend use
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(env.supabaseUrl, env.supabaseAnonKey)
 
-// Admin client for server-side use
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey)
+// Admin client for server-side use (only create if service role key exists)
+export const supabaseAdmin = env.supabaseServiceRoleKey 
+  ? createClient(env.supabaseUrl, env.supabaseServiceRoleKey)
+  : null
+
+// Helper to check if Supabase is configured
+export const isSupabaseConfigured = () => isEnvironmentConfigured()
+
+// Type-safe Supabase admin client
+export function getSupabaseAdmin() {
+  if (!supabaseAdmin) {
+    throw new Error('Supabase admin client is not configured. Missing SUPABASE_SERVICE_ROLE_KEY.');
+  }
+  return supabaseAdmin;
+}

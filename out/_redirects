@@ -1,0 +1,5 @@
+# SPA fallback
+/*    /index.html   200
+
+# API routes - these would need server-side rendering or external API
+/api/*  /api-not-available.html  200

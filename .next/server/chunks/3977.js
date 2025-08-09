@@ -1,0 +1,1 @@
+"use strict";exports.id=3977,exports.ids=[3977],exports.modules={73977:(e,d,s)=>{s.r(d),s.d(d,{getMachineId:()=>o});var t=s(78813);async function o(){t.s.debug("could not read machine-id: unsupported platform")}}};

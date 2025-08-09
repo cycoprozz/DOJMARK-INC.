@@ -1,384 +1,520 @@
 'use client';
 
-import { useEffect } from 'react';
-import Layout from '@/components/layout';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Star, CheckCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import DojmarkLayout from '@/components/DojmarkLayout';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 export default function Home() {
+  const [isVisible, setIsVisible] = useState(false);
+
   useEffect(() => {
-    // Add fade-in animation to elements
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('fade-in');
-        }
-      });
-    });
-
-    document.querySelectorAll('.animate-on-scroll').forEach(el => {
-      observer.observe(el);
-    });
-
-    return () => {
-      document.querySelectorAll('.animate-on-scroll').forEach(el => {
-        observer.unobserve(el);
-      });
-    };
+    setIsVisible(true);
   }, []);
 
   return (
-    <Layout>
-      {/* Hero Section */}
-      <div className="relative isolate overflow-hidden bg-white pt-24 pb-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl animate-on-scroll">
-              <span className="block">Black Excellence in</span>
-              <span className="block text-blue-600">Digital Creation</span>
+    <DojmarkLayout>
+      {/* Mobile-First Hero Section */}
+      <section 
+        className="main-slider main-slider-one" 
+        style={{
+          position: 'relative',
+          display: 'block',
+          zIndex: 5,
+          overflow: 'hidden',
+          minHeight: '100vh',
+          paddingTop: '60px' // Account for fixed header
+        }}
+      >
+        
+        {/* Background Layer */}
+        <div 
+          className="image-layer"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            background: 'linear-gradient(135deg, #0F2C55 0%, #1E2026 50%, #0a1f3d 100%)',
+            zIndex: 1
+          }}
+        >
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            background: 'rgba(0, 0, 0, 0.6)',
+            zIndex: -1
+          }} />
+        </div>
+
+        {/* Content Container */}
+        <div 
+          className="auto-container" 
+          style={{
+            maxWidth: '1650px',
+            width: '100%',
+            margin: '0 auto',
+            padding: '0 15px',
+            position: 'relative',
+            zIndex: 2
+          }}
+        >
+          
+          {/* Main Content - Mobile First */}
+          <div 
+            className="main-slider-one__single container-mobile" 
+            style={{
+              position: 'relative',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 'clamp(80px, 15vh, 200px) 16px clamp(40px, 10vh, 150px)',
+              zIndex: 2,
+              minHeight: 'calc(100vh - 60px)',
+              textAlign: 'center',
+              maxWidth: '100%'
+            }}
+          >
+            
+            {/* Social Links - Mobile Optimized */}
+            <ul 
+              className="social-links"
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: 'clamp(20px, 5vw, 30px)',
+                listStyle: 'none',
+                padding: 0,
+                margin: '0 0 clamp(30px, 8vw, 50px) 0',
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+                transition: 'all 1000ms ease',
+                transitionDelay: '500ms',
+                flexWrap: 'wrap'
+              }}
+            >
+              <li>
+                <Link href="https://www.instagram.com/cycoprozz" style={{
+                  color: '#ffffff',
+                  fontSize: 'clamp(16px, 4vw, 18px)',
+                  fontWeight: '500',
+                  fontFamily: 'DM Sans, sans-serif',
+                  textDecoration: 'none',
+                  opacity: 0.8,
+                  transition: 'opacity 0.3s ease',
+                  padding: '8px 12px',
+                  minHeight: '44px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  borderRadius: '8px',
+                  touchAction: 'manipulation'
+                }}
+                onTouchStart={(e) => e.currentTarget.style.opacity = '1'}
+                onTouchEnd={(e) => e.currentTarget.style.opacity = '0.8'}
+                onMouseEnter={(e) => {
+                  if (window.innerWidth > 640) e.currentTarget.style.opacity = '1';
+                }}
+                onMouseLeave={(e) => {
+                  if (window.innerWidth > 640) e.currentTarget.style.opacity = '0.8';
+                }}
+                >
+                  Ig.
+                </Link>
+              </li>
+              <li>
+                <Link href="#" style={{
+                  color: '#ffffff',
+                  fontSize: '18px',
+                  fontWeight: '500',
+                  fontFamily: 'DM Sans, sans-serif',
+                  textDecoration: 'none',
+                  opacity: 0.8,
+                  transition: 'opacity 0.3s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'}
+                >
+                  Tw.
+                </Link>
+              </li>
+              <li>
+                <Link href="#" style={{
+                  color: '#ffffff',
+                  fontSize: '18px',
+                  fontWeight: '500',
+                  fontFamily: 'DM Sans, sans-serif',
+                  textDecoration: 'none',
+                  opacity: 0.8,
+                  transition: 'opacity 0.3s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'}
+                >
+                  Li.
+                </Link>
+              </li>
+              <li>
+                <Link href="#" style={{
+                  color: '#ffffff',
+                  fontSize: '18px',
+                  fontWeight: '500',
+                  fontFamily: 'DM Sans, sans-serif',
+                  textDecoration: 'none',
+                  opacity: 0.8,
+                  transition: 'opacity 0.3s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'}
+                >
+                  Be.
+                </Link>
+              </li>
+            </ul>
+
+            {/* Main Title - Centered */}
+            <div 
+              className="title"
+              style={{
+                textAlign: 'center',
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? 'translateY(0)' : 'translateY(50px)',
+                transition: 'all 1000ms ease',
+                transitionDelay: '1000ms',
+                marginBottom: '50px'
+              }}
+            >
+              <h1 style={{
+                color: '#ffffff',
+                fontSize: 'clamp(60px, 10vw, 140px)',
+                lineHeight: '1.1em',
+                fontWeight: '500',
+                fontFamily: 'Poppins, sans-serif',
+                margin: 0,
+                letterSpacing: '-0.02em'
+              }}>
+                Result-Driven <br/>
+                <span style={{
+                  background: 'linear-gradient(135deg, #F46A25 0%, #22C4FF 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
+                }}>
+                  Digital
+                </span> <br/>
+                Marketing
             </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600 animate-on-scroll">
-              DOJMARK is a Black-centered digital content creation agency specializing in custom website design, 
-              product development, brand content creation, and full business launch kits for underrepresented businesses.
+      </div>
+
+            {/* Subtitle - Mobile Optimized */}
+            <p style={{
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontSize: 'clamp(16px, 4vw, 20px)',
+              fontFamily: 'DM Sans, sans-serif',
+              textAlign: 'center',
+              maxWidth: '90%',
+              margin: '0 auto clamp(30px, 8vw, 50px)',
+              lineHeight: 1.6,
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+              transition: 'all 1000ms ease',
+              transitionDelay: '1500ms'
+            }}>
+              Empowering Black-owned businesses with cutting-edge digital solutions that drive measurable growth.
             </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6 animate-on-scroll">
-              <Button className="btn-primary">
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button variant="outline" className="btn-secondary">
-                View Our Work
-              </Button>
-              <Button className="bg-blue-600 text-white hover:bg-blue-700">
-                Book Now
-              </Button>
+
+            {/* CTA Buttons - Mobile First */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '12px',
+              width: '100%'
+            }}>
+              <Link 
+                href="/quote"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'linear-gradient(135deg, #F46A25 0%, #22C4FF 100%)',
+                  color: '#ffffff',
+                  padding: 'clamp(16px, 4vw, 18px) clamp(24px, 8vw, 40px)',
+                  fontSize: 'clamp(14px, 3.5vw, 16px)',
+                  fontWeight: '600',
+                  textDecoration: 'none',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  borderRadius: '12px',
+                  transition: 'all 0.3s ease',
+                  fontFamily: 'DM Sans, sans-serif',
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+                  transitionDelay: '2000ms',
+                  minHeight: '48px',
+                  width: 'clamp(250px, 80vw, 300px)',
+                  touchAction: 'manipulation'
+                }}
+                onTouchStart={(e) => {
+                  e.currentTarget.style.transform = 'scale(0.98)';
+                }}
+                onTouchEnd={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+                onMouseEnter={(e) => {
+                  if (window.innerWidth > 640) {
+                    e.currentTarget.style.transform = 'translateY(-3px) scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 20px 40px rgba(244, 106, 37, 0.3)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (window.innerWidth > 640) {
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }
+                }}
+              >
+                Get Your Quote
+                <ArrowRight style={{marginLeft: '8px', width: '18px', height: '18px'}} />
+              </Link>
+              
+              <Link 
+                href="/portal"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  color: '#ffffff',
+                  padding: 'clamp(14px, 3.5vw, 16px) clamp(20px, 6vw, 32px)',
+                  fontSize: 'clamp(12px, 3vw, 14px)',
+                  fontWeight: '500',
+                  textDecoration: 'none',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '12px',
+                  transition: 'all 0.3s ease',
+                  fontFamily: 'DM Sans, sans-serif',
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+                  transitionDelay: '2200ms',
+                  minHeight: '44px',
+                  width: 'clamp(200px, 60vw, 250px)',
+                  touchAction: 'manipulation'
+                }}
+                onTouchStart={(e) => {
+                  e.currentTarget.style.transform = 'scale(0.98)';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                }}
+                onTouchEnd={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
+                onMouseEnter={(e) => {
+                  if (window.innerWidth > 640) {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (window.innerWidth > 640) {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }
+                }}
+              >
+                Open Client Portal
+              </Link>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Brands Section */}
+      <section style={{
+        padding: '80px 0',
+        background: '#ffffff'
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 15px'
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '40px'
+          }}>
+            <div style={{
+              color: '#1E2026',
+              fontSize: '18px',
+              fontWeight: '500',
+              fontFamily: 'DM Sans, sans-serif',
+              opacity: 0.7
+            }}>
+              Trusted by 200+ Black-owned businesses
       </div>
 
-      {/* Services Section */}
-      <div className="py-24 sm:py-32 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center animate-on-scroll">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Our Services
-            </h2>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              We provide comprehensive digital solutions tailored to Black-owned businesses and diverse entrepreneurs.
-            </p>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '60px',
+              opacity: 0.6
+            }}>
+              <div style={{
+                fontSize: '24px',
+                fontWeight: '600',
+                color: '#1E2026',
+                fontFamily: 'Poppins, sans-serif'
+              }}>
+                URBAN LUXE
           </div>
-          <div className="mx-auto mt-16 grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                title: "Custom Website Design",
-                description: "Stunning, responsive websites that capture your brand essence and convert visitors.",
-                icon: "🌐"
-              },
-              {
-                title: "Product Development",
-                description: "eCommerce and dropshipping solutions that drive sales and streamline operations.",
-                icon: "🧠"
-              },
-              {
-                title: "Brand Content Creation",
-                description: "Professional photo, video, graphics, and copy that tell your unique story.",
-                icon: "📷"
-              },
-              {
-                title: "Social Media Integration",
-                description: "Seamless social media strategies that amplify your brand's reach and engagement.",
-                icon: "📲"
-              },
-              {
-                title: "Business Launch Kits",
-                description: "Complete startup packages including logo, website, CRM setup, and AI automation.",
-                icon: "🧩"
-              },
-              {
-                title: "Digital Strategy",
-                description: "Data-driven approaches to grow your online presence and maximize ROI.",
-                icon: "📊"
-              }
-            ].map((service, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg border border-gray-200 hover:border-blue-600 transition-all animate-on-scroll">
-                <div className="text-3xl mb-4">{service.icon}</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{service.title}</h3>
-                <p className="text-gray-600">{service.description}</p>
+              <div style={{
+                fontSize: '24px',
+                fontWeight: '600',
+                color: '#1E2026',
+                fontFamily: 'Poppins, sans-serif'
+              }}>
+                BLOOM WELLNESS
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Testimonials Section */}
-      <div className="py-24 sm:py-32 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center animate-on-scroll">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Client Testimonials
-            </h2>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              Hear from businesses we've helped transform.
-            </p>
-          </div>
-          <div className="mx-auto mt-16 grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                name: "Jamal Williams",
-                role: "CEO, Urban Threads",
-                content: "DOJMARK transformed our online presence completely. Our sales increased by 150% in just three months after launching our new site.",
-                rating: 5
-              },
-              {
-                name: "Aisha Johnson",
-                role: "Founder, Bloom Wellness",
-                content: "The team at DOJMARK understood our vision perfectly. They delivered a brand identity that truly represents our values and mission.",
-                rating: 5
-              },
-              {
-                name: "Marcus Thompson",
-                role: "Owner, TechForward Solutions",
-                content: "Working with DOJMARK was the best business decision I made this year. Their expertise in digital strategy is unmatched.",
-                rating: 5
-              }
-            ].map((testimonial, index) => (
-              <div key={index} className="bg-gray-50 p-6 rounded-lg animate-on-scroll">
-                <div className="flex mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 text-blue-600 fill-current" />
-                  ))}
+              <div style={{
+                fontSize: '24px',
+                fontWeight: '600',
+                color: '#1E2026',
+                fontFamily: 'Poppins, sans-serif'
+              }}>
+                TECH FORWARD
                 </div>
-                <p className="text-gray-600 mb-4">"{testimonial.content}"</p>
-                <div>
-                  <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                  <p className="text-sm text-gray-500">{testimonial.role}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Photography Gallery Section */}
-      <div className="py-24 sm:py-32 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center animate-on-scroll">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Photography Gallery
-            </h2>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              Capturing moments that tell your story through professional photography services.
-            </p>
-          </div>
-          <div className="mx-auto mt-16">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                {
-                  title: "Portrait Photography",
-                  description: "Professional headshots and portrait sessions",
-                  image: "https://via.placeholder.com/400x300/3b82f6/ffffff?text=Portrait"
-                },
-                {
-                  title: "Event Photography",
-                  description: "Corporate events, weddings, and special occasions",
-                  image: "https://via.placeholder.com/400x300/2563eb/ffffff?text=Events",
-                  featuredImages: [
-                    {
-                      title: "IDEA Institute Event",
-                      description: "Professional speaking engagement at IDEA Institute for Dual Degree Engineering Advancement",
-                      image: "/images/event-photography/idea-institute-event.jpg"
-                    },
-                    {
-                      title: "Social Gathering",
-                      description: "Indoor networking event with attendees enjoying refreshments",
-                      image: "/images/event-photography/social-gathering.jpg"
-                    },
-                    {
-                      title: "MOREHOUSE Event",
-                      description: "Formal group photography at MOREHOUSE institution",
-                      image: "/images/event-photography/morehouse-event.jpg"
-                    },
-                    {
-                      title: "Library Gathering",
-                      description: "Community event in academic library setting",
-                      image: "/images/event-photography/library-gathering.jpg"
-                    }
-                  ]
-                },
-                {
-                  title: "Product Photography",
-                  description: "High-quality product shots for eCommerce",
-                  image: "https://via.placeholder.com/400x300/1d4ed8/ffffff?text=Products"
-                },
-                {
-                  title: "Real Estate Photography",
-                  description: "Property and architectural photography",
-                  image: "https://via.placeholder.com/400x300/1e40af/ffffff?text=Real+Estate"
-                },
-                {
-                  title: "Brand Photography",
-                  description: "Custom brand imagery and content creation",
-                  image: "https://via.placeholder.com/400x300/1e3a8a/ffffff?text=Brand"
-                },
-                {
-                  title: "Lifestyle Photography",
-                  description: "Candid and lifestyle photography sessions",
-                  image: "https://via.placeholder.com/400x300/172554/ffffff?text=Lifestyle"
-                }
-              ].map((item, index) => (
-                <div key={index} className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all animate-on-scroll">
-                  <img 
-                    src={item.image} 
-                    alt={item.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{item.title}</h3>
-                    <p className="text-gray-600 mb-4">{item.description}</p>
-                    
-                    {/* Featured Images for Event Photography */}
-                    {item.featuredImages && (
-                      <div className="mt-4">
-                        <h4 className="text-sm font-medium text-gray-700 mb-3">Featured Event Photos:</h4>
-                        <div className="grid grid-cols-2 gap-2">
-                          {item.featuredImages.map((featuredImage, featuredIndex) => (
-                            <div key={featuredIndex} className="relative group cursor-pointer">
-                              <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
-                                <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                                  <div className="text-center p-2">
-                                    <div className="text-xs font-medium text-blue-800">{featuredImage.title}</div>
-                                    <div className="text-xs text-blue-600 mt-1">Event Photo</div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 rounded-lg flex items-center justify-center">
-                                <div className="text-white text-xs text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
-                                  <div className="font-medium">{featuredImage.title}</div>
-                                  <div className="text-xs mt-1">{featuredImage.description}</div>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Project Covers Section */}
-      <div className="py-24 sm:py-32 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center animate-on-scroll">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Featured Projects
+      {/* Services Preview */}
+      <section style={{
+        padding: '120px 0',
+        background: '#F8F9FA'
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 15px'
+        }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '80px',
+            alignItems: 'center'
+          }}>
+            <div>
+              <h2 style={{
+                fontSize: 'clamp(40px, 6vw, 80px)',
+                fontWeight: '500',
+                fontFamily: 'Poppins, sans-serif',
+                color: '#1E2026',
+                lineHeight: '1.1em',
+                margin: '0 0 30px 0'
+              }}>
+                Digital <br/>
+                <span style={{color: '#F46A25'}}>Excellence</span>
             </h2>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              Explore our latest work and client success stories.
-            </p>
+              
+              <p style={{
+                fontSize: '18px',
+                lineHeight: '1.6em',
+                color: '#666',
+                fontFamily: 'DM Sans, sans-serif',
+                marginBottom: '40px'
+              }}>
+                We create result-driven digital solutions that empower Black-owned businesses 
+                to achieve unprecedented growth in the digital marketplace.
+              </p>
+
+              <Link 
+                href="/services"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  color: '#1E2026',
+                  fontSize: '18px',
+                  fontWeight: '500',
+                  fontFamily: 'DM Sans, sans-serif',
+                  textDecoration: 'none',
+                  borderBottom: '2px solid #F46A25',
+                  paddingBottom: '5px',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#F46A25';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#1E2026';
+                }}
+              >
+                Explore Services
+                <ArrowRight style={{marginLeft: '10px', width: '20px', height: '20px'}} />
+              </Link>
           </div>
-          <div className="mx-auto mt-16">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '30px'
+            }}>
               {[
-                {
-                  title: "The Morris Team",
-                  description: "Real Estate Website",
-                  image: "https://via.placeholder.com/400x300/2563eb/ffffff?text=The+Morris+Team",
-                  link: "https://the-morris-team.netlify.app"
-                },
-                {
-                  title: "Secret Touch Spa",
-                  description: "Luxury Spa Website",
-                  image: "https://via.placeholder.com/400x300/3b82f6/ffffff?text=Secret+Touch+Spa",
-                  link: "https://secrettouchspa.netlify.app"
-                },
-                {
-                  title: "Carib Life ATL",
-                  description: "Caribbean Community Platform",
-                  image: "https://via.placeholder.com/400x300/1d4ed8/ffffff?text=Carib+Life+ATL",
-                  link: "https://cariblifeatl.netlify.app"
-                }
-              ].map((project, index) => (
-                <div key={index} className="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all animate-on-scroll">
-                  <img 
-                    src={project.image} 
-                    alt={project.title}
-                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                      <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                      <p className="text-sm mb-4">{project.description}</p>
-                      <a 
-                        href={project.link} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center text-blue-400 hover:text-blue-300 font-medium"
-                      >
-                        View Project
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </a>
+                {title: 'Web Development', count: '150+'},
+                {title: 'Brand Identity', count: '200+'},
+                {title: 'Content Creation', count: '300+'},
+                {title: 'Digital Strategy', count: '100+'}
+              ].map((service, index) => (
+                <div 
+                  key={index}
+                  style={{
+                    padding: '40px 30px',
+                    background: '#ffffff',
+                    textAlign: 'center',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-5px)';
+                    e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div style={{
+                    fontSize: '36px',
+                    fontWeight: '600',
+                    color: '#F46A25',
+                    fontFamily: 'Poppins, sans-serif',
+                    marginBottom: '15px'
+                  }}>
+                    {service.count}
                     </div>
+                  <div style={{
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    color: '#1E2026',
+                    fontFamily: 'DM Sans, sans-serif'
+                  }}>
+                    {service.title}
                   </div>
                 </div>
               ))}
             </div>
           </div>
         </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="bg-blue-600 py-16 sm:py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center animate-on-scroll">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Ready to Elevate Your Brand?
-            </h2>
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-blue-100">
-              Join the growing list of Black-owned businesses that have transformed their digital presence with DOJMARK.
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Button className="bg-white text-blue-600 hover:bg-gray-100">
-                Book a Consultation
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
-                View Case Studies
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Stats Section */}
-      <div className="py-24 sm:py-32 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl lg:max-w-none">
-            <div className="text-center animate-on-scroll">
-              <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                Our Impact
-              </h2>
-            </div>
-            <dl className="mt-16 grid grid-cols-1 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-3">
-              {[
-                { name: 'Black-Owned Businesses Served', value: '150+' },
-                { name: 'Projects Completed', value: '300+' },
-                { name: 'Average ROI Increase', value: '125%' },
-              ].map((stat, index) => (
-                <div key={index} className="bg-white px-8 py-10 sm:px-10 animate-on-scroll">
-                  <dt className="text-sm font-semibold leading-6 text-gray-600">{stat.name}</dt>
-                  <dd className="text-3xl font-bold tracking-tight text-gray-900">{stat.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </div>
-      </div>
-    </Layout>
+      </section>
+    </DojmarkLayout>
   );
 }

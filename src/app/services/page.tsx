@@ -1,331 +1,641 @@
 'use client';
 
-import { useEffect } from 'react';
-import Layout from '@/components/layout';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import DojmarkLayout from '@/components/DojmarkLayout';
+import Link from 'next/link';
+import { 
+  ArrowRight, 
+  Monitor, 
+  Palette, 
+  Camera, 
+  Video, 
+  Target, 
+  Megaphone,
+  Code,
+  Sparkles
+} from 'lucide-react';
 
 export default function Services() {
+  const [isVisible, setIsVisible] = useState(false);
+  const [activeService, setActiveService] = useState(0);
+
   useEffect(() => {
-    // Add fade-in animation to elements
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('fade-in');
-        }
-      });
-    });
-
-    document.querySelectorAll('.animate-on-scroll').forEach(el => {
-      observer.observe(el);
-    });
-
-    return () => {
-      document.querySelectorAll('.animate-on-scroll').forEach(el => {
-        observer.unobserve(el);
-      });
-    };
+    setIsVisible(true);
   }, []);
 
+  const services = [
+    {
+      icon: <Monitor className="w-16 h-16" />,
+      title: 'Web Development',
+      subtitle: 'Digital Foundations',
+      description: 'Custom websites and web applications built with cutting-edge technology for optimal performance and user experience.',
+      features: ['Responsive Design', 'E-commerce Solutions', 'CMS Integration', 'Performance Optimization'],
+      price: 'From $2,500'
+    },
+    {
+      icon: <Palette className="w-16 h-16" />,
+      title: 'Brand Identity',
+      subtitle: 'Visual Excellence',
+      description: 'Complete brand identity systems that capture your essence and resonate with your target audience.',
+      features: ['Logo Design', 'Brand Guidelines', 'Color Palettes', 'Typography Systems'],
+      price: 'From $1,800'
+    },
+    {
+      icon: <Camera className="w-16 h-16" />,
+      title: 'Photography',
+      subtitle: 'Visual Storytelling',
+      description: 'Professional photography services that showcase your brand, products, and story with stunning visual impact.',
+      features: ['Product Photography', 'Event Coverage', 'Portrait Sessions', 'Commercial Shoots'],
+      price: 'From $500'
+    },
+    {
+      icon: <Video className="w-16 h-16" />,
+      title: 'Videography',
+      subtitle: 'Motion Graphics',
+      description: 'Dynamic video content that engages audiences and drives action across all digital platforms.',
+      features: ['Promotional Videos', 'Social Media Content', 'Documentary Style', 'Animation'],
+      price: 'From $1,200'
+    },
+    {
+      icon: <Target className="w-16 h-16" />,
+      title: 'Digital Strategy',
+      subtitle: 'Growth Planning',
+      description: 'Comprehensive digital strategies that align with your business goals and drive measurable results.',
+      features: ['Market Analysis', 'SEO Strategy', 'Content Planning', 'Performance Tracking'],
+      price: 'From $800'
+    },
+    {
+      icon: <Megaphone className="w-16 h-16" />,
+      title: 'Content Creation',
+      subtitle: 'Engaging Stories',
+      description: 'Compelling content that tells your story, engages your audience, and builds lasting connections.',
+      features: ['Social Media Content', 'Blog Writing', 'Email Campaigns', 'Copy Writing'],
+      price: 'From $600'
+    }
+  ];
+
   return (
-    <Layout>
-      {/* Hero Section */}
-      <div className="relative isolate overflow-hidden bg-white pt-24 pb-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl animate-on-scroll">
-              Our <span className="text-blue-600">Services</span>
-            </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600 animate-on-scroll">
-              Comprehensive digital solutions designed to elevate Black-owned businesses and diverse entrepreneurs.
+    <DojmarkLayout>
+      {/* Hero Section - Baosh Style */}
+      <section className="main-slider main-slider-one" style={{
+        position: 'relative',
+        display: 'block',
+        zIndex: 5,
+        overflow: 'hidden',
+        paddingTop: '120px'
+      }}>
+        
+        {/* Background */}
+        <div 
+          className="image-layer"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            background: 'linear-gradient(135deg, #0F2C55 0%, #1E2026 50%, #0a1f3d 100%)',
+            zIndex: 1
+          }}
+        >
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            background: 'rgba(0, 0, 0, 0.4)',
+            zIndex: -1
+          }} />
+        </div>
+
+        {/* Content */}
+        <div className="auto-container" style={{
+          maxWidth: '1650px',
+          width: '100%',
+          margin: '0 auto',
+          padding: '0 15px'
+        }}>
+          
+          <div className="main-slider-one__single" style={{
+            position: 'relative',
+            display: 'block',
+            padding: '150px 0px 200px',
+            zIndex: 2
+          }}>
+            
+
+
+            {/* Content */}
+            <div className="main-slider-one__content" style={{
+              position: 'relative',
+              display: 'block',
+              zIndex: 5
+            }}>
+              
+              {/* Breadcrumb */}
+              <div 
+                style={{
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible 
+                    ? 'perspective(400px) rotateY(0deg) translateX(0px)' 
+                    : 'perspective(400px) rotateY(0deg) translateX(-80px)',
+                  transition: 'all 1000ms ease',
+                  transitionDelay: '500ms',
+                  marginBottom: '30px'
+                }}
+              >
+                <Link href="/" style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '16px',
+                  textDecoration: 'none',
+                  fontFamily: 'DM Sans, sans-serif'
+                }}>
+                  Home
+                </Link>
+                <span style={{
+                  color: 'rgba(255, 255, 255, 0.5)',
+                  margin: '0 15px'
+                }}>
+                  /
+                </span>
+                <span style={{
+                  color: '#F46A25',
+                  fontSize: '16px',
+                  fontFamily: 'DM Sans, sans-serif'
+                }}>
+                  Services
+                </span>
+              </div>
+
+              {/* Main Title */}
+              <div 
+                className="title"
+                style={{
+                  position: 'relative',
+                  display: 'block',
+                  paddingLeft: '165px',
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible 
+                    ? 'perspective(400px) rotateY(0deg) translateX(0px)' 
+                    : 'perspective(400px) rotateY(0deg) translateX(80px)',
+                  transformOrigin: 'bottom',
+                  transition: 'all 1000ms ease',
+                  transitionDelay: '1000ms',
+                  zIndex: 10
+                }}
+              >
+                <h1 style={{
+                  color: '#ffffff',
+                  fontSize: 'clamp(60px, 10vw, 120px)',
+                  lineHeight: '1.1em',
+                  fontWeight: '500',
+                  fontFamily: 'Poppins, sans-serif',
+                  margin: 0,
+                  letterSpacing: '-0.02em'
+                }}>
+                  Digital <br/>
+                  <span style={{
+                    position: 'relative',
+                    display: 'inline-block',
+                    top: '14px',
+                    background: 'linear-gradient(135deg, #F46A25 0%, #22C4FF 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text'
+                  }}>
+                    Solutions
+                  </span> <br/>
+                  That Work
+                </h1>
+              </div>
+                  </div>
+                </div>
+              </div>
+      </section>
+
+      {/* Services Grid - Interactive */}
+      <section style={{
+        padding: '120px 0',
+        background: '#ffffff'
+      }}>
+        <div className="auto-container" style={{
+          maxWidth: '1400px',
+          margin: '0 auto',
+          padding: '0 15px'
+        }}>
+          
+          {/* Section Header */}
+          <div style={{
+            marginBottom: '80px',
+            maxWidth: '600px'
+          }}>
+            <h2 style={{
+              fontSize: 'clamp(40px, 6vw, 80px)',
+              fontWeight: '500',
+              fontFamily: 'Poppins, sans-serif',
+              color: '#1E2026',
+              lineHeight: '1.1em',
+              margin: '0 0 20px 0'
+            }}>
+              Our <span style={{color: '#F46A25'}}>Services</span>
+                  </h2>
+            
+            <p style={{
+              fontSize: '18px',
+              lineHeight: '1.6em',
+              color: '#666',
+              fontFamily: 'DM Sans, sans-serif'
+            }}>
+              Comprehensive digital solutions designed to elevate your brand and drive measurable growth.
             </p>
+                  </div>
+
+          {/* Services Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+            gap: '40px'
+          }}>
+            {services.map((service, index) => (
+              <div 
+                key={index}
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #f0f0f0',
+                  padding: '50px 40px',
+                  transition: 'all 0.4s ease',
+                  cursor: 'pointer',
+                  transform: activeService === index ? 'translateY(-10px)' : 'translateY(0)',
+                  boxShadow: activeService === index 
+                    ? '0 30px 60px rgba(0,0,0,0.15)' 
+                    : '0 5px 20px rgba(0,0,0,0.05)'
+                }}
+                onMouseEnter={() => setActiveService(index)}
+                onMouseLeave={() => setActiveService(-1)}
+              >
+                {/* Icon */}
+                <div style={{
+                  color: '#F46A25',
+                  marginBottom: '30px',
+                  transform: activeService === index ? 'scale(1.1)' : 'scale(1)',
+                  transition: 'transform 0.3s ease'
+                }}>
+                  {service.icon}
+                </div>
+                
+                {/* Title */}
+                <div style={{
+                  marginBottom: '20px'
+                }}>
+                  <h3 style={{
+                    fontSize: '28px',
+                    fontWeight: '600',
+                    color: '#1E2026',
+                    fontFamily: 'Poppins, sans-serif',
+                    marginBottom: '8px'
+                  }}>
+                    {service.title}
+                  </h3>
+                  
+                  <div style={{
+                    fontSize: '14px',
+                    color: '#F46A25',
+                    fontFamily: 'DM Sans, sans-serif',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    fontWeight: '500'
+                  }}>
+                    {service.subtitle}
+                </div>
+              </div>
+
+                {/* Description */}
+                <p style={{
+                  fontSize: '16px',
+                  lineHeight: '1.6em',
+                  color: '#666',
+                  fontFamily: 'DM Sans, sans-serif',
+                  marginBottom: '30px'
+                }}>
+                  {service.description}
+                </p>
+
+                {/* Features */}
+                <ul style={{
+                  listStyle: 'none',
+                  padding: 0,
+                  margin: '0 0 30px 0'
+                }}>
+                  {service.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} style={{
+                      fontSize: '14px',
+                      color: '#888',
+                      fontFamily: 'DM Sans, sans-serif',
+                      marginBottom: '8px',
+                      paddingLeft: '20px',
+                      position: 'relative'
+                    }}>
+                      <span style={{
+                        position: 'absolute',
+                        left: 0,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        width: '6px',
+                        height: '6px',
+                        background: '#F46A25',
+                        borderRadius: '50%'
+                      }} />
+                      {feature}
+                    </li>
+                  ))}
+                  </ul>
+
+                {/* Price & CTA */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: '30px',
+                  paddingTop: '30px',
+                  borderTop: '1px solid #f0f0f0'
+                }}>
+                  <div style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: '#1E2026',
+                    fontFamily: 'Poppins, sans-serif'
+                  }}>
+                    {service.price}
+                  </div>
+                  
+                  <Link 
+                    href={`/quote?service=${services[activeService].title.toLowerCase().replace(/ /g, '-')}`}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      color: '#F46A25',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      fontFamily: 'DM Sans, sans-serif',
+                      textDecoration: 'none',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}
+                  >
+                    Get Quote
+                    <ArrowRight style={{marginLeft: '8px', width: '16px', height: '16px'}} />
+                  </Link>
+                </div>
+              </div>
+            ))}
+                  </div>
+                </div>
+      </section>
+
+      {/* Process Section */}
+      <section style={{
+        padding: '120px 0',
+        background: '#F8F9FA'
+      }}>
+        <div className="auto-container" style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 15px'
+        }}>
+          
+          {/* Section Header */}
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '80px'
+          }}>
+            <h2 style={{
+              fontSize: 'clamp(40px, 6vw, 80px)',
+              fontWeight: '500',
+              fontFamily: 'Poppins, sans-serif',
+              color: '#1E2026',
+              lineHeight: '1.1em',
+              margin: '0 0 20px 0'
+            }}>
+              Our <span style={{color: '#F46A25'}}>Process</span>
+            </h2>
+            
+            <p style={{
+              fontSize: '18px',
+              color: '#666',
+              fontFamily: 'DM Sans, sans-serif',
+              maxWidth: '600px',
+              margin: '0 auto'
+            }}>
+              A proven methodology that ensures successful project delivery and exceptional results.
+            </p>
+                  </div>
+
+          {/* Process Steps */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '40px'
+          }}>
+            {[
+              {
+                step: '01',
+                title: 'Discovery',
+                description: 'Deep dive into your business, goals, and target audience to create a solid foundation.'
+              },
+              {
+                step: '02',
+                title: 'Strategy',
+                description: 'Develop a comprehensive plan tailored to your specific needs and objectives.'
+              },
+              {
+                step: '03',
+                title: 'Design',
+                description: 'Create stunning visuals and user experiences that capture your brand essence.'
+              },
+              {
+                step: '04',
+                title: 'Development',
+                description: 'Build and implement solutions using cutting-edge technology and best practices.'
+              },
+              {
+                step: '05',
+                title: 'Launch',
+                description: 'Deploy your project with comprehensive testing and quality assurance.'
+              },
+              {
+                step: '06',
+                title: 'Growth',
+                description: 'Monitor, optimize, and scale your solution for continued success and growth.'
+              }
+            ].map((process, index) => (
+              <div 
+                key={index}
+                style={{
+                  textAlign: 'center',
+                  padding: '40px 20px'
+                }}
+              >
+                <div style={{
+                  fontSize: '48px',
+                  fontWeight: '700',
+                  color: '#F46A25',
+                  fontFamily: 'Poppins, sans-serif',
+                  marginBottom: '20px',
+                  opacity: 0.3
+                }}>
+                  {process.step}
+                </div>
+                
+                <h3 style={{
+                  fontSize: '24px',
+                  fontWeight: '600',
+                  color: '#1E2026',
+                  fontFamily: 'Poppins, sans-serif',
+                  marginBottom: '15px'
+                }}>
+                  {process.title}
+                </h3>
+                
+                <p style={{
+                  fontSize: '16px',
+                  lineHeight: '1.6em',
+                  color: '#666',
+                  fontFamily: 'DM Sans, sans-serif',
+                  margin: 0
+                }}>
+                  {process.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
-
-      {/* Services Details */}
-      <div className="py-24 sm:py-32 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-5xl">
-            <div className="space-y-20">
-              {/* Service 1 */}
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 animate-on-scroll">
-                <div className="lg:order-2">
-                  <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                    Custom Website Design & Development
-                  </h2>
-                  <p className="mt-4 text-lg leading-8 text-gray-600">
-                    We create stunning, responsive websites that capture your brand essence and convert visitors into customers. 
-                    Our designs are culturally fluent and technically superior.
-                  </p>
-                  <ul className="mt-8 space-y-4 text-gray-600">
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Mobile-first responsive design</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">SEO-optimized structure</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Fast load times and performance</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Accessibility compliant</span>
-                    </li>
-                  </ul>
-                  <div className="mt-8">
-                    <Button className="btn-primary">
-                      Learn More
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="lg:order-1 flex items-center justify-center">
-                  <div className="w-full h-64 bg-gradient-to-br from-[#d4af37] to-[#c41e3a] rounded-lg flex items-center justify-center">
-                    <span className="text-4xl">🌐</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Service 2 */}
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 animate-on-scroll">
-                <div>
-                  <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                    Product Development
-                  </h2>
-                  <p className="mt-4 text-lg leading-8 text-gray-600">
-                    Specializing in eCommerce and dropshipping solutions that drive sales and streamline operations. 
-                    We help you bring your products to market with efficiency and style.
-                  </p>
-                  <ul className="mt-8 space-y-4 text-gray-600">
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Shopify and custom eCommerce platforms</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Dropshipping automation</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Inventory management systems</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Payment gateway integration</span>
-                    </li>
-                  </ul>
-                  <div className="mt-8">
-                    <Button className="btn-primary">
-                      Learn More
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center">
-                  <div className="w-full h-64 bg-gradient-to-br from-[#2e8b57] to-[#d4af37] rounded-lg flex items-center justify-center">
-                    <span className="text-4xl">🧠</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Service 3 */}
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 animate-on-scroll">
-                <div className="lg:order-2">
-                  <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                    Brand Content Creation
-                  </h2>
-                  <p className="mt-4 text-lg leading-8 text-gray-600">
-                    Professional photo, video, graphics, and copy that tell your unique story. 
-                    Our content creation services are designed to showcase your brand in the best light.
-                  </p>
-                  <ul className="mt-8 space-y-4 text-gray-600">
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Professional photography and videography</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Graphic design and branding</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Copywriting and content strategy</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Social media content creation</span>
-                    </li>
-                  </ul>
-                  <div className="mt-8">
-                    <Button className="btn-primary">
-                      Learn More
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="lg:order-1 flex items-center justify-center">
-                  <div className="w-full h-64 bg-gradient-to-br from-[#c41e3a] to-[#2e8b57] rounded-lg flex items-center justify-center">
-                    <span className="text-4xl">📷</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Service 4 */}
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 animate-on-scroll">
-                <div>
-                  <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                    Social Media Integration
-                  </h2>
-                  <p className="mt-4 text-lg leading-8 text-gray-600">
-                    Seamless social media strategies that amplify your brand's reach and engagement. 
-                    We help you connect with your audience across all platforms.
-                  </p>
-                  <ul className="mt-8 space-y-4 text-gray-600">
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Platform-specific strategy development</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Content calendar creation</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Community management</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Analytics and performance tracking</span>
-                    </li>
-                  </ul>
-                  <div className="mt-8">
-                    <Button className="btn-primary">
-                      Learn More
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center">
-                  <div className="w-full h-64 bg-gradient-to-br from-[#d4af37] to-[#2e8b57] rounded-lg flex items-center justify-center">
-                    <span className="text-4xl">📲</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Service 5 */}
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 animate-on-scroll">
-                <div className="lg:order-2">
-                  <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                    Business Launch Kits
-                  </h2>
-                  <p className="mt-4 text-lg leading-8 text-gray-600">
-                    Complete startup packages including logo, website, CRM setup, and AI automation. 
-                    Everything you need to launch your business successfully.
-                  </p>
-                  <ul className="mt-8 space-y-4 text-gray-600">
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Logo and brand identity design</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Professional website development</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">CRM system setup and integration</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">AI automation and workflow setup</span>
-                    </li>
-                  </ul>
-                  <div className="mt-8">
-                    <Button className="btn-primary">
-                      Learn More
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="lg:order-1 flex items-center justify-center">
-                  <div className="w-full h-64 bg-gradient-to-br from-[#2e8b57] to-[#c41e3a] rounded-lg flex items-center justify-center">
-                    <span className="text-4xl">🧩</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Service 6 */}
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 animate-on-scroll">
-                <div>
-                  <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                    Digital Strategy Consulting
-                  </h2>
-                  <p className="mt-4 text-lg leading-8 text-gray-600">
-                    Data-driven approaches to grow your online presence and maximize ROI. 
-                    We help you make informed decisions about your digital investments.
-                  </p>
-                  <ul className="mt-8 space-y-4 text-gray-600">
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Digital audit and analysis</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Competitive research and insights</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Growth strategy development</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
-                      <span className="ml-3">Performance optimization</span>
-                    </li>
-                  </ul>
-                  <div className="mt-8">
-                    <Button className="btn-primary">
-                      Learn More
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center">
-                  <div className="w-full h-64 bg-gradient-to-br from-[#d4af37] to-[#c41e3a] rounded-lg flex items-center justify-center">
-                    <span className="text-4xl">📊</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </section>
 
       {/* CTA Section */}
-      <div className="bg-blue-600 py-16 sm:py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center animate-on-scroll">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Ready to Transform Your Business?
+      <section style={{
+        padding: '120px 0',
+        background: '#1E2026'
+      }}>
+        <div className="auto-container" style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 15px'
+        }}>
+          <div style={{
+            textAlign: 'center'
+          }}>
+            <h2 style={{
+              fontSize: 'clamp(36px, 5vw, 60px)',
+              fontWeight: '500',
+              fontFamily: 'Poppins, sans-serif',
+              color: '#ffffff',
+              lineHeight: '1.2em',
+              margin: '0 0 30px 0'
+            }}>
+              Ready to <span style={{color: '#F46A25'}}>Transform</span> Your Business?
             </h2>
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-blue-100">
-              Let's discuss how our services can help you achieve your business goals.
+            
+            <p style={{
+              fontSize: '18px',
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontFamily: 'DM Sans, sans-serif',
+              marginBottom: '40px',
+              maxWidth: '600px',
+              margin: '0 auto 40px'
+            }}>
+              Let's discuss your project and create a custom solution that drives real results.
             </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Button className="bg-white text-blue-600 hover:bg-gray-100">
-                Schedule a Consultation
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
-                View Pricing
-              </Button>
+
+            <div style={{
+              display: 'flex',
+              gap: '20px',
+              justifyContent: 'center',
+              flexWrap: 'wrap'
+            }}>
+              <Link 
+                href="/quote"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  background: '#F46A25',
+                  color: '#ffffff',
+                  padding: '18px 40px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  textDecoration: 'none',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  transition: 'all 0.3s ease',
+                  fontFamily: 'DM Sans, sans-serif'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#0F2C55';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#F46A25';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                Start Your Project
+                <ArrowRight style={{marginLeft: '10px', width: '20px', height: '20px'}} />
+              </Link>
+
+              <Link 
+                href="/portfolio"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  background: 'transparent',
+                  color: '#ffffff',
+                  padding: '18px 40px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  textDecoration: 'none',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                  transition: 'all 0.3s ease',
+                  fontFamily: 'DM Sans, sans-serif'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#F46A25';
+                  e.currentTarget.style.color = '#F46A25';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                  e.currentTarget.style.color = '#ffffff';
+                }}
+              >
+                View Our Work
+              </Link>
             </div>
           </div>
         </div>
-      </div>
-    </Layout>
+      </section>
+
+      {/* Custom CSS */}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .main-slider-one__single {
+            padding: 120px 0px 150px !important;
+          }
+          
+          .main-slider-one__img {
+            right: 20px !important;
+            top: 60px !important;
+          }
+          
+          .title {
+            padding-left: 20px !important;
+          }
+          
+          section div[style*="grid-template-columns"] {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
+    </DojmarkLayout>
   );
 }

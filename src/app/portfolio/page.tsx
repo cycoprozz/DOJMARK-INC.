@@ -1,297 +1,1102 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Layout from '@/components/layout';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, ExternalLink, Github } from 'lucide-react';
-
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  url: string;
-  technologies: string[];
-  image: string;
-  category: string;
-  featured: boolean;
-}
-
-const clientProjects: Project[] = [
-  {
-    id: '1',
-    title: 'The Morris Team',
-    description: 'Professional real estate website with modern design and lead generation features. Built to showcase property listings and agent profiles with a focus on user experience and conversion optimization.',
-    url: 'https://the-morris-team.netlify.app',
-    technologies: ['React', 'Next.js', 'Tailwind CSS', 'Netlify'],
-    image: 'https://via.placeholder.com/600x400/1a1a1a/ffffff?text=The+Morris+Team',
-    category: 'Real Estate',
-    featured: true
-  },
-  {
-    id: '2',
-    title: 'Secret Touch Spa',
-    description: 'Luxury spa and wellness website with booking system and service showcase. Designed to create a serene, premium online experience that reflects the brand\'s high-end spa services.',
-    url: 'https://secrettouchspa.netlify.app',
-    technologies: ['React', 'Next.js', 'Tailwind CSS', 'Netlify'],
-    image: 'https://via.placeholder.com/600x400/1a1a1a/ffffff?text=Secret+Touch+Spa',
-    category: 'Wellness & Beauty',
-    featured: true
-  },
-  {
-    id: '3',
-    title: 'Carib Life ATL',
-    description: 'Caribbean culture and lifestyle website for Atlanta community. Features event listings, business directory, and cultural content to connect and celebrate Caribbean heritage in the Atlanta area.',
-    url: 'https://cariblifeatl.netlify.app',
-    technologies: ['React', 'Next.js', 'Tailwind CSS', 'Netlify'],
-    image: 'https://via.placeholder.com/600x400/1a1a1a/ffffff?text=Carib+Life+ATL',
-    category: 'Community & Culture',
-    featured: true
-  }
-];
+import { useState, useEffect } from 'react';
+import DojmarkLayout from '@/components/DojmarkLayout';
+import { OptimizedImage } from '@/components/OptimizedImage';
+import { SkeletonCard } from '@/components/ui/loading';
+import { ComponentErrorBoundary } from '@/components/ErrorBoundary';
+import Link from 'next/link';
+import { 
+  ArrowRight, 
+  ExternalLink,
+  Calendar,
+  Tag,
+  Eye
+} from 'lucide-react';
 
 export default function Portfolio() {
-  const [filteredProjects, setFilteredProjects] = useState<Project[]>(clientProjects);
-  const [activeCategory, setActiveCategory] = useState<string>('All');
-
-  const categories = ['All', ...new Set(clientProjects.map(project => project.category))];
+  const [isVisible, setIsVisible] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeProject, setActiveProject] = useState<number | null>(null);
 
   useEffect(() => {
-    if (activeCategory === 'All') {
-      setFilteredProjects(clientProjects);
-    } else {
-      setFilteredProjects(clientProjects.filter(project => project.category === activeCategory));
-    }
-  }, [activeCategory]);
+    setIsVisible(true);
+  }, []);
 
-  const featuredProjects = clientProjects.filter(project => project.featured);
+  const filters = [
+    { id: 'all', label: 'All Projects' },
+    { id: 'web', label: 'Web Development' },
+    { id: 'brand', label: 'Brand Identity' },
+    { id: 'photo', label: 'Photography' },
+    { id: 'video', label: 'Videography' }
+  ];
+
+  const projects = [
+    {
+      id: 1,
+      title: 'Secret Touch Spa',
+      category: 'web',
+      tags: ['Wellness', 'Spa Services', 'Luxury'],
+      image: '/images/portfolio/secret-touch-spa.jpg',
+      description: 'Elegant spa website featuring serene design, service booking system, and wellness-focused branding that captures the essence of relaxation and luxury.',
+      client: 'Secret Touch Spa',
+      year: '2024',
+      link: 'https://secrettouchspa.netlify.app',
+      featured: true
+    },
+    {
+      id: 2,
+    title: 'The Morris Team',
+      category: 'web',
+      tags: ['Real Estate', 'Luxury', 'E-commerce'],
+      image: '/images/portfolio/morris-team.jpg',
+      description: 'Comprehensive real estate platform featuring property listings, lifestyle products, digital courses, and press coverage. Complete business ecosystem for luxury real estate professionals.',
+      client: 'The Morris Team - Corcoran Group',
+      year: '2024',
+      link: 'https://the-morris-team.netlify.app',
+    featured: true
+  },
+  {
+      id: 3,
+      title: 'CaribLife Media',
+      category: 'web',
+      tags: ['Media', 'Entertainment', 'Cultural'],
+      image: '/images/portfolio/cariblife-media.jpg',
+      description: 'Dynamic media platform showcasing authentic Caribbean culture through exclusive interviews, docuseries, and reality TV content. Founded by Emmy-award winning producer.',
+      client: 'CaribLife Media™',
+      year: '2024',
+      link: 'https://cariblifeatl.netlify.app',
+    featured: true
+  },
+  {
+      id: 4,
+      title: 'TMor Lifestyle',
+      category: 'web',
+      tags: ['E-commerce', 'Lifestyle', 'Brand'],
+      image: '/images/portfolio/tmor-lifestyle.jpg',
+      description: 'Sophisticated lifestyle e-commerce platform featuring curated products, seamless shopping experience, and premium brand presentation.',
+      client: 'TMor Lifestyle',
+      year: '2024',
+      link: 'https://tmor-lifestyle-1754690506.netlify.app',
+    featured: true
+    },
+    {
+      id: 5,
+      title: 'Urban Luxe Boutique',
+      category: 'web',
+      tags: ['E-commerce', 'Fashion', 'Mobile-First'],
+      image: '/images/event-photography/social-gathering.jpg',
+      description: 'Complete e-commerce solution for luxury fashion boutique with custom CMS and payment integration.',
+      client: 'Urban Luxe',
+      year: '2023',
+      link: '#'
+    },
+    {
+      id: 6,
+      title: 'CyCo Professional Gallery',
+      category: 'photo',
+      tags: ['Professional', 'Portrait', 'Event', 'Commercial'],
+      image: '/images/portfolio/cyco-professional-gallery.jpg',
+      description: 'Professional photography portfolio showcasing high-end portraits, corporate events, and commercial work. Featuring elegant galleries with premium client experiences.',
+      client: 'CyCo Professional',
+      year: '2024',
+      link: 'https://www.cyco.pro/client',
+      featured: true,
+      isGallery: true
+    },
+    {
+      id: 9,
+      title: 'Tech Forward Conference',
+      category: 'photo',
+      tags: ['Event', 'Corporate', 'Technology', 'Business'],
+      image: '/images/photography/tech-forward/095A0810.jpg',
+      description: 'Professional corporate event photography capturing keynote speakers, networking sessions, and breakthrough moments. High-quality documentation of technology innovation and business leadership.',
+      client: 'Tech Forward',
+      year: '2024',
+      link: '#',
+      featured: true,
+      isGallery: true,
+      galleryImages: [
+        '/images/photography/tech-forward/095A0810.jpg',
+        '/images/photography/tech-forward/095A0418.jpg',
+        '/images/photography/tech-forward/095A0425.jpg',
+        '/images/photography/tech-forward/095A0485.jpg',
+        '/images/photography/tech-forward/095A0562.jpg',
+        '/images/photography/tech-forward/095A0635.jpg',
+        '/images/photography/tech-forward/095A0769.jpg'
+      ]
+    },
+    {
+      id: 7,
+      title: 'Heritage Arts Collective',
+      category: 'brand',
+      tags: ['Arts', 'Culture', 'Non-Profit'],
+      image: '/images/event-photography/library-gathering.jpg',
+      description: 'Cultural organization brand identity celebrating African-American artistic heritage.',
+      client: 'Heritage Arts',
+      year: '2023',
+      link: '#'
+    },
+    {
+      id: 8,
+      title: 'Morehouse Innovation Hub',
+      category: 'video',
+      tags: ['Educational', 'Promotional', 'Documentary'],
+      image: '/images/event-photography/morehouse-event.jpg',
+      description: 'Documentary-style promotional video showcasing innovation and entrepreneurship programs.',
+      client: 'Morehouse College',
+      year: '2024',
+      link: '#'
+    }
+  ];
+
+  const filteredProjects = activeFilter === 'all' 
+    ? projects 
+    : projects.filter(project => project.category === activeFilter);
 
   return (
-    <Layout>
-      {/* Hero Section */}
-      <div className="relative isolate overflow-hidden bg-white pt-24 pb-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl animate-on-scroll">
-              Our <span className="text-blue-600">Portfolio</span>
-            </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600 animate-on-scroll">
-              Showcasing our work with diverse clients across various industries. 
-              Each project represents our commitment to excellence, innovation, and cultural fluency.
-            </p>
-          </div>
-        </div>
+    <DojmarkLayout>
+      {/* Hero Section - Baosh Style */}
+      <section className="main-slider main-slider-one" style={{
+        position: 'relative',
+        display: 'block',
+        zIndex: 5,
+        overflow: 'hidden',
+        paddingTop: '120px'
+      }}>
+        
+        {/* Background */}
+        <div 
+          className="image-layer"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            background: 'linear-gradient(135deg, #1E2026 0%, #0F2C55 50%, #1a1d23 100%)',
+            zIndex: 1
+          }}
+        >
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            background: 'rgba(0, 0, 0, 0.3)',
+            zIndex: -1
+          }} />
       </div>
 
-      {/* Featured Projects */}
-      <div className="py-16 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Featured Projects
+        {/* Content */}
+        <div className="auto-container" style={{
+          maxWidth: '1650px',
+          width: '100%',
+          margin: '0 auto',
+          padding: '0 15px'
+        }}>
+          
+          <div className="main-slider-one__single" style={{
+            position: 'relative',
+            display: 'block',
+            padding: '150px 0px 200px',
+            zIndex: 2
+          }}>
+            
+
+
+            {/* Content */}
+            <div className="main-slider-one__content" style={{
+              position: 'relative',
+              display: 'block',
+              zIndex: 5
+            }}>
+              
+              {/* Breadcrumb */}
+              <div 
+                style={{
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible 
+                    ? 'perspective(400px) rotateY(0deg) translateX(0px)' 
+                    : 'perspective(400px) rotateY(0deg) translateX(-80px)',
+                  transition: 'all 1000ms ease',
+                  transitionDelay: '500ms',
+                  marginBottom: '30px'
+                }}
+              >
+                <Link href="/" style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '16px',
+                  textDecoration: 'none',
+                  fontFamily: 'DM Sans, sans-serif'
+                }}>
+                  Home
+                </Link>
+                <span style={{
+                  color: 'rgba(255, 255, 255, 0.5)',
+                  margin: '0 15px'
+                }}>
+                  /
+                    </span>
+                <span style={{
+                  color: '#F46A25',
+                  fontSize: '16px',
+                  fontFamily: 'DM Sans, sans-serif'
+                }}>
+                  Portfolio
+                      </span>
+                  </div>
+
+              {/* Main Title */}
+              <div 
+                className="title"
+                style={{
+                  position: 'relative',
+                  display: 'block',
+                  paddingLeft: '165px',
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible 
+                    ? 'perspective(400px) rotateY(0deg) translateX(0px)' 
+                    : 'perspective(400px) rotateY(0deg) translateX(80px)',
+                  transformOrigin: 'bottom',
+                  transition: 'all 1000ms ease',
+                  transitionDelay: '1000ms',
+                  zIndex: 10
+                }}
+              >
+                <h1 style={{
+                  color: '#ffffff',
+                  fontSize: 'clamp(60px, 10vw, 120px)',
+                  lineHeight: '1.1em',
+                  fontWeight: '500',
+                  fontFamily: 'Poppins, sans-serif',
+                  margin: 0,
+                  letterSpacing: '-0.02em'
+                }}>
+                  Our <br/>
+                  <span style={{
+                    position: 'relative',
+                    display: 'inline-block',
+                    top: '14px',
+                    background: 'linear-gradient(135deg, #F46A25 0%, #22C4FF 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text'
+                  }}>
+                    Creative
+                  </span> <br/>
+                  Work
+            </h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Projects Section */}
+      <section style={{
+        padding: '80px 0 60px',
+        background: '#F8F9FA'
+      }}>
+        <div className="auto-container" style={{
+          maxWidth: '1400px',
+          margin: '0 auto',
+          padding: '0 15px'
+        }}>
+          
+          {/* Featured Intro */}
+          <div style={{
+            marginBottom: '60px',
+            textAlign: 'center'
+          }}>
+            <h2 style={{
+              fontSize: 'clamp(32px, 5vw, 48px)',
+              fontWeight: '500',
+              fontFamily: 'Poppins, sans-serif',
+              color: '#1E2026',
+              lineHeight: '1.2em',
+              margin: '0 0 20px 0'
+            }}>
+              Featured <span style={{color: '#F46A25'}}>Live Websites</span>
             </h2>
-            <p className="mt-4 text-lg leading-8 text-gray-600">
-              Highlighting some of our most impactful work for clients
+            
+            <p style={{
+              fontSize: '18px',
+              lineHeight: '1.6em',
+              color: '#666',
+              fontFamily: 'DM Sans, sans-serif',
+              maxWidth: '600px',
+              margin: '0 auto'
+            }}>
+              Explore our live websites showcasing modern design, seamless functionality, 
+              and result-driven digital solutions.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            {featuredProjects.map((project, index) => (
+          {/* Featured Projects Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '40px'
+          }}>
+            {projects.filter(project => project.featured).map((project) => (
               <div
                 key={project.id}
-                className="group relative bg-white rounded-lg overflow-hidden border-2 border-blue-600 animate-on-scroll"
+                style={{
+                  background: '#ffffff',
+                  borderRadius: '0',
+                  overflow: 'hidden',
+                  transition: 'all 0.4s ease',
+                  cursor: 'pointer',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+                  position: 'relative'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-10px)';
+                  e.currentTarget.style.boxShadow = '0 30px 60px rgba(0,0,0,0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+                }}
               >
+                {/* Featured Badge */}
+                <div style={{
+                  position: 'absolute',
+                  top: '20px',
+                  right: '20px',
+                  background: 'linear-gradient(135deg, #F46A25 0%, #22C4FF 100%)',
+                  color: '#ffffff',
+                  padding: '8px 15px',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  fontFamily: 'DM Sans, sans-serif',
+                  zIndex: 10
+                }}>
+                  Live Site
+                </div>
+
                 {/* Project Image */}
-                <div className="aspect-w-16 aspect-h-9 relative overflow-hidden">
+                <div style={{
+                  height: '250px',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  {/* Actual Website Screenshot */}
                   <img
                     src={project.image}
-                    alt={project.title}
-                    className="w-full h-64 object-cover"
+                    alt={`${project.title} website screenshot`}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transition: 'transform 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <span className="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full mb-2">
-                      {project.category}
-                    </span>
-                    <h3 className="text-xl font-bold text-white">{project.title}</h3>
+                  
+                  {/* Hover Overlay */}
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'rgba(15, 44, 85, 0.9)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = '0'}
+                  >
+                    <Link 
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        background: '#ffffff',
+                        color: '#1E2026',
+                        padding: '15px 25px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        textDecoration: 'none',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        fontFamily: 'DM Sans, sans-serif',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#F46A25';
+                        e.currentTarget.style.color = '#ffffff';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#ffffff';
+                        e.currentTarget.style.color = '#1E2026';
+                      }}
+                    >
+                      Visit Live Site
+                      <ExternalLink style={{marginLeft: '8px', width: '16px', height: '16px'}} />
+                    </Link>
                   </div>
                 </div>
 
-                {/* Project Content */}
-                <div className="p-6">
-                  <p className="text-gray-600 mb-4 text-sm leading-relaxed">{project.description}</p>
+                {/* Project Info */}
+                <div style={{
+                  padding: '30px'
+                }}>
+                  <h3 style={{
+                    fontSize: '24px',
+                    fontWeight: '600',
+                    fontFamily: 'Poppins, sans-serif',
+                    color: '#1E2026',
+                    margin: '0 0 10px 0'
+                  }}>
+                    {project.title}
+                  </h3>
                   
-                  {/* Technologies */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.technologies.map((tech, techIndex) => (
+                  <p style={{
+                    fontSize: '16px',
+                    lineHeight: '1.6em',
+                    color: '#666',
+                    fontFamily: 'DM Sans, sans-serif',
+                    margin: '0 0 20px 0'
+                  }}>
+                    {project.description}
+                  </p>
+
+                  {/* Tags */}
+                  <div style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '10px',
+                    marginBottom: '20px'
+                  }}>
+                    {project.tags.map((tag) => (
                       <span
-                        key={techIndex}
-                        className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-md"
+                        key={tag}
+                        style={{
+                          background: '#F8F9FA',
+                          color: '#1E2026',
+                          padding: '5px 12px',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          fontFamily: 'DM Sans, sans-serif'
+                        }}
                       >
-                        {tech}
+                        {tag}
                       </span>
                     ))}
                   </div>
 
-                  {/* View Project Button */}
-                  <Button
-                    onClick={() => window.open(project.url, '_blank')}
-                    className="w-full btn-primary text-sm"
-                  >
-                    View Live Project
-                    <ExternalLink className="ml-2 h-4 w-4" />
-                  </Button>
+                  {/* Client & Year */}
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    fontSize: '14px',
+                    color: '#999',
+                    fontFamily: 'DM Sans, sans-serif'
+                  }}>
+                    <span>{project.client}</span>
+                    <span>{project.year}</span>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
+      </section>
+
+      {/* All Projects Section */}
+      <section style={{
+        padding: '80px 0 40px',
+        background: '#ffffff'
+      }}>
+        <div className="auto-container" style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 15px'
+        }}>
+          
+          {/* Intro */}
+          <div style={{
+            marginBottom: '60px',
+            maxWidth: '600px'
+          }}>
+            <h2 style={{
+              fontSize: 'clamp(32px, 5vw, 48px)',
+              fontWeight: '500',
+              fontFamily: 'Poppins, sans-serif',
+              color: '#1E2026',
+              lineHeight: '1.2em',
+              margin: '0 0 20px 0'
+            }}>
+              All <span style={{color: '#F46A25'}}>Projects</span>
+            </h2>
+            
+            <p style={{
+              fontSize: '18px',
+              lineHeight: '1.6em',
+              color: '#666',
+              fontFamily: 'DM Sans, sans-serif'
+            }}>
+              A showcase of our recent work helping Black-owned businesses thrive in the digital space.
+            </p>
       </div>
 
-      {/* Category Filter */}
-      <div className="py-8 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex flex-wrap justify-center gap-4">
-            {categories.map((category) => (
+          {/* Filter Buttons */}
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '20px',
+            marginBottom: '60px'
+          }}>
+            {filters.map((filter) => (
               <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
-                  activeCategory === category
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                key={filter.id}
+                onClick={() => setActiveFilter(filter.id)}
+                style={{
+                  background: activeFilter === filter.id ? '#F46A25' : 'transparent',
+                  color: activeFilter === filter.id ? '#ffffff' : '#666',
+                  border: `2px solid ${activeFilter === filter.id ? '#F46A25' : '#e0e0e0'}`,
+                  padding: '12px 24px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  fontFamily: 'DM Sans, sans-serif',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  if (activeFilter !== filter.id) {
+                    e.currentTarget.style.borderColor = '#F46A25';
+                    e.currentTarget.style.color = '#F46A25';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeFilter !== filter.id) {
+                    e.currentTarget.style.borderColor = '#e0e0e0';
+                    e.currentTarget.style.color = '#666';
+                  }
+                }}
               >
-                {category}
+                {filter.label}
               </button>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* All Projects Grid */}
-      <div className="py-24 sm:py-32 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      {/* Portfolio Grid */}
+      <section style={{
+        padding: '0 0 120px',
+        background: '#ffffff'
+      }}>
+        <div className="auto-container" style={{
+          maxWidth: '1400px',
+          margin: '0 auto',
+          padding: '0 15px'
+        }}>
+          
+          {/* Projects Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+            gap: '40px'
+          }}>
             {filteredProjects.map((project, index) => (
               <div
                 key={project.id}
-                className="group relative bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-blue-600 transition-all animate-on-scroll"
+                style={{
+                  background: '#ffffff',
+                  borderRadius: '0',
+                  overflow: 'hidden',
+                  transition: 'all 0.4s ease',
+                  cursor: 'pointer',
+                  transform: activeProject === project.id ? 'translateY(-10px)' : 'translateY(0)',
+                  boxShadow: activeProject === project.id 
+                    ? '0 30px 60px rgba(0,0,0,0.15)' 
+                    : '0 5px 20px rgba(0,0,0,0.05)'
+                }}
+                onMouseEnter={() => setActiveProject(project.id)}
+                onMouseLeave={() => setActiveProject(null)}
               >
                 {/* Project Image */}
-                <div className="aspect-w-16 aspect-h-9 relative overflow-hidden">
+                <div style={{
+                  height: '300px',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  {/* Display actual screenshot for featured projects, gallery grid for photography, gradient for others */}
+                  {project.featured && project.category === 'photo' && project.isGallery ? (
+                    /* Photography Gallery Display */
+                    <div style={{
+                      width: '100%',
+                      height: '100%',
+                      position: 'relative'
+                    }}>
+                      {project.galleryImages ? (
+                        /* Grid of actual photos */
+                        <div style={{
+                          width: '100%',
+                          height: '100%',
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(3, 1fr)',
+                          gridTemplateRows: 'repeat(3, 1fr)',
+                          gap: '2px'
+                        }}>
+                          {project.galleryImages.slice(0, 6).map((imageUrl, index) => (
+                            <img 
+                              key={index}
+                              src={imageUrl}
+                              alt={`${project.title} photo ${index + 1}`}
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover'
+                              }}
+                            />
+                          ))}
+                          {/* More Photos Indicator */}
+                          {project.galleryImages.length > 6 && (
+                            <div style={{
+                              background: 'rgba(0,0,0,0.8)',
+                              color: '#ffffff',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              fontFamily: 'DM Sans, sans-serif'
+                            }}>
+                              +{project.galleryImages.length - 6}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        /* Single gallery screenshot */
+                        <img 
+                          src={project.image}
+                          alt={`${project.title} professional gallery`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            transition: 'transform 0.3s ease'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                        />
+                      )}
+                      
+                      {/* Professional Gallery Badge */}
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '15px',
+                        left: '15px',
+                        background: 'rgba(0,0,0,0.8)',
+                        color: '#ffffff',
+                        padding: '8px 15px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        fontFamily: 'DM Sans, sans-serif',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
+                        {project.galleryImages ? `${project.galleryImages.length} Photos` : 'Professional Gallery'}
+                      </div>
+                    </div>
+                  ) : project.featured ? (
                   <img
                     src={project.image}
-                    alt={project.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300" />
+                      alt={`${project.title} website screenshot`}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transition: 'transform 0.3s ease'
+                      }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: '100%',
+                      height: '100%',
+                      background: `linear-gradient(135deg, ${project.category === 'web' ? '#0F2C55' : project.category === 'brand' ? '#F46A25' : project.category === 'photo' ? '#22C4FF' : '#1E2026'} 0%, rgba(0,0,0,0.7) 100%)`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      {/* Project Title for Non-Featured */}
+                      <div style={{
+                        color: '#ffffff',
+                        fontSize: '32px',
+                        fontWeight: '600',
+                        fontFamily: 'Poppins, sans-serif',
+                        textAlign: 'center',
+                        opacity: 0.8
+                      }}>
+                        {project.title.split(' ')[0]}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Hover Overlay */}
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'rgba(15, 44, 85, 0.9)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: activeProject === project.id ? 1 : 0,
+                    transition: 'opacity 0.3s ease'
+                  }}>
+                    <Link 
+                      href={project.link}
+                      target={project.featured ? "_blank" : undefined}
+                      rel={project.featured ? "noopener noreferrer" : undefined}
+                      style={{
+                        background: '#ffffff',
+                        color: '#1E2026',
+                        padding: '15px 25px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        textDecoration: 'none',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        fontFamily: 'DM Sans, sans-serif',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#F46A25';
+                        e.currentTarget.style.color = '#ffffff';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#ffffff';
+                        e.currentTarget.style.color = '#1E2026';
+                      }}
+                    >
+                      {project.featured && project.isGallery ? 'View Gallery' : project.featured ? 'Visit Live Site' : 'View Project'}
+                      <ExternalLink style={{marginLeft: '8px', width: '16px', height: '16px'}} />
+                    </Link>
+                  </div>
+
+                  {/* Category Badge */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '20px',
+                    left: '20px',
+                    background: 'rgba(255, 255, 255, 0.9)',
+                    color: '#1E2026',
+                    padding: '8px 15px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    fontFamily: 'DM Sans, sans-serif'
+                  }}>
+                    {filters.find(f => f.id === project.category)?.label.replace(' ', '')}
+                  </div>
+
+                  {/* Featured Badge for Live Sites */}
                   {project.featured && (
-                    <div className="absolute top-2 right-2">
-                      <span className="px-2 py-1 bg-blue-600 text-white text-xs font-bold rounded">
-                        FEATURED
-                      </span>
+                    <div style={{
+                      position: 'absolute',
+                      top: '20px',
+                      right: '20px',
+                      background: 'linear-gradient(135deg, #F46A25 0%, #22C4FF 100%)',
+                      color: '#ffffff',
+                      padding: '8px 15px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      fontFamily: 'DM Sans, sans-serif'
+                    }}>
+{project.isGallery ? 'Live Gallery' : 'Live Site'}
                     </div>
                   )}
                 </div>
 
-                {/* Project Content */}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-blue-600 font-medium">{project.category}</span>
-                    <a
-                      href={project.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-blue-600 transition-colors"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
+                {/* Project Info */}
+                <div style={{
+                  padding: '40px'
+                }}>
+                  {/* Meta Info */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '20px',
+                    marginBottom: '20px'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      fontSize: '14px',
+                      color: '#888',
+                      fontFamily: 'DM Sans, sans-serif'
+                    }}>
+                      <Calendar style={{width: '14px', height: '14px', marginRight: '5px'}} />
+                      {project.year}
+                    </div>
+                    <div style={{
+                      fontSize: '14px',
+                      color: '#888',
+                      fontFamily: 'DM Sans, sans-serif'
+                    }}>
+                      {project.client}
+                    </div>
                   </div>
                   
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{project.title}</h3>
-                  <p className="text-gray-600 mb-4 text-sm leading-relaxed">{project.description}</p>
+                  {/* Title */}
+                  <h3 style={{
+                    fontSize: '24px',
+                    fontWeight: '600',
+                    color: '#1E2026',
+                    fontFamily: 'Poppins, sans-serif',
+                    marginBottom: '15px',
+                    lineHeight: '1.3em'
+                  }}>
+                    {project.title}
+                  </h3>
                   
-                  {/* Technologies */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.technologies.map((tech, techIndex) => (
+                  {/* Description */}
+                  <p style={{
+                    fontSize: '16px',
+                    lineHeight: '1.6em',
+                    color: '#666',
+                    fontFamily: 'DM Sans, sans-serif',
+                    marginBottom: '20px'
+                  }}>
+                    {project.description}
+                  </p>
+
+                  {/* Tags */}
+                  <div style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '10px',
+                    marginBottom: '25px'
+                  }}>
+                    {project.tags.map((tag, tagIndex) => (
                       <span
-                        key={techIndex}
-                        className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-md"
+                        key={tagIndex}
+                        style={{
+                          background: '#F8F9FA',
+                          color: '#666',
+                          padding: '6px 12px',
+                          fontSize: '12px',
+                          fontFamily: 'DM Sans, sans-serif',
+                          display: 'inline-flex',
+                          alignItems: 'center'
+                        }}
                       >
-                        {tech}
+                        <Tag style={{width: '12px', height: '12px', marginRight: '5px'}} />
+                        {tag}
                       </span>
                     ))}
                   </div>
 
-                  {/* View Project Button */}
-                  <Button
-                    onClick={() => window.open(project.url, '_blank')}
-                    className="w-full btn-primary text-sm"
+                  {/* View Project Link */}
+                  <Link 
+                    href={project.link}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      color: '#F46A25',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      fontFamily: 'DM Sans, sans-serif',
+                      textDecoration: 'none',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}
                   >
-                    View Live Project
-                    <ExternalLink className="ml-2 h-4 w-4" />
-                  </Button>
+                    View Details
+                    <ArrowRight style={{marginLeft: '8px', width: '16px', height: '16px'}} />
+                  </Link>
                 </div>
               </div>
             ))}
           </div>
-
-          {filteredProjects.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No projects found in this category.</p>
-            </div>
-          )}
         </div>
-      </div>
+      </section>
 
       {/* CTA Section */}
-      <div className="bg-blue-600 py-16 sm:py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center animate-on-scroll">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Ready to Start Your Project?
+      <section style={{
+        padding: '120px 0',
+        background: '#1E2026'
+      }}>
+        <div className="auto-container" style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 15px'
+        }}>
+          <div style={{
+            textAlign: 'center'
+          }}>
+            <h2 style={{
+              fontSize: 'clamp(36px, 5vw, 60px)',
+              fontWeight: '500',
+              fontFamily: 'Poppins, sans-serif',
+              color: '#ffffff',
+              lineHeight: '1.2em',
+              margin: '0 0 30px 0'
+            }}>
+              Ready to Create Something <span style={{color: '#F46A25'}}>Amazing</span>?
             </h2>
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-blue-100">
-              Let's create something amazing together. Your project could be the next one in our portfolio.
+            
+            <p style={{
+              fontSize: '18px',
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontFamily: 'DM Sans, sans-serif',
+              marginBottom: '40px',
+              maxWidth: '600px',
+              margin: '0 auto 40px'
+            }}>
+              Let's collaborate on your next project and create something that makes a real impact.
             </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Button className="bg-white text-blue-600 hover:bg-gray-100">
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
-                View Our Process
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Stats Section */}
-      <div className="py-24 sm:py-32 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl lg:max-w-none">
-            <div className="text-center animate-on-scroll">
-              <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                Project Impact
-              </h2>
-            </div>
-            <dl className="mt-16 grid grid-cols-1 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-4">
-              {[
-                { name: 'Projects Completed', value: '50+' },
-                { name: 'Happy Clients', value: '40+' },
-                { name: 'Industries Served', value: '12+' },
-                { name: 'Awards Won', value: '5+' },
-              ].map((stat, index) => (
-                <div key={index} className="bg-white px-8 py-10 sm:px-10 animate-on-scroll">
-                  <dt className="text-sm font-semibold leading-6 text-gray-600">{stat.name}</dt>
-                  <dd className="text-3xl font-bold tracking-tight text-gray-900">{stat.value}</dd>
-                </div>
-              ))}
-            </dl>
+            <Link 
+              href="/quote"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                background: '#F46A25',
+                color: '#ffffff',
+                padding: '18px 40px',
+                fontSize: '16px',
+                fontWeight: '600',
+                textDecoration: 'none',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                transition: 'all 0.3s ease',
+                fontFamily: 'DM Sans, sans-serif'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#0F2C55';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 10px 30px rgba(244, 106, 37, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#F46A25';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              Get Your Quote
+              <ArrowRight style={{marginLeft: '10px', width: '20px', height: '20px'}} />
+            </Link>
           </div>
         </div>
-      </div>
-    </Layout>
+      </section>
+
+      {/* Custom CSS */}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          /* Mobile Hero Section */
+          .main-slider-one__single {
+            padding: 120px 0px 80px !important;
+            text-align: center;
+          }
+          
+          .title {
+            padding-left: 20px !important;
+            text-align: center !important;
+          }
+          
+          /* Mobile Containers */
+          .auto-container {
+            padding: 0 20px !important;
+            max-width: 100% !important;
+          }
+          
+          /* Mobile Grid Layouts */
+          section div[style*="grid-template-columns"] {
+            grid-template-columns: 1fr !important;
+            gap: 30px !important;
+          }
+          
+          /* Mobile Project Cards */
+          div[style*="height:300px"] {
+            height: 250px !important;
+          }
+          
+          div[style*="height:250px"] {
+            height: 220px !important;
+          }
+          
+          /* Mobile Typography */
+          h1, h2 {
+            font-size: clamp(32px, 8vw, 60px) !important;
+            text-align: center !important;
+            line-height: 1.2em !important;
+            margin-bottom: 20px !important;
+          }
+          
+          p {
+            font-size: 16px !important;
+            text-align: center !important;
+            line-height: 1.6em !important;
+            margin-bottom: 30px !important;
+          }
+          
+          /* Mobile Project Info */
+          div[style*="padding:40px"] {
+            padding: 25px !important;
+          }
+          
+          div[style*="padding:30px"] {
+            padding: 20px !important;
+          }
+          
+          /* Mobile Spacing */
+          section {
+            padding: 60px 0 40px !important;
+          }
+          
+          div[style*="margin-bottom:60px"] {
+            margin-bottom: 40px !important;
+          }
+          
+          div[style*="gap:40px"] {
+            gap: 25px !important;
+          }
+          
+          /* Mobile Photography Grid */
+          div[style*="grid-template-columns:repeat(3, 1fr)"] {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 1px !important;
+          }
+          
+          /* Mobile Links and Buttons */
+          a[style*="padding:18px"] {
+            padding: 15px 30px !important;
+            font-size: 14px !important;
+          }
+          
+          a[style*="padding:15px"] {
+            padding: 12px 20px !important;
+            font-size: 12px !important;
+          }
+          
+          /* Mobile Filter Buttons */
+          button {
+            font-size: 14px !important;
+            padding: 12px 20px !important;
+            margin: 5px !important;
+          }
+        }
+      `}</style>
+    </DojmarkLayout>
   );
 }

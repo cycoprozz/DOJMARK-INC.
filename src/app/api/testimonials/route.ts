@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
+
+export const dynamic = 'force-static';
+export const revalidate = false;
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,6 +10,56 @@ export async function GET(request: NextRequest) {
     const featured = searchParams.get('featured');
     const limit = searchParams.get('limit');
     
+    // If Supabase is not configured, return mock data
+    if (!isSupabaseConfigured()) {
+      const mockTestimonials = [
+        {
+          id: '1',
+          client_name: 'Jamal Williams',
+          company: 'Urban Threads',
+          role: 'CEO',
+          content: 'DOJMARK transformed our online presence completely. Our sales increased by 150% in just three months after launching our new site.',
+          rating: 5,
+          featured: true,
+          approved: true,
+          sort_order: 1
+        },
+        {
+          id: '2',
+          client_name: 'Aisha Johnson',
+          company: 'Bloom Wellness',
+          role: 'Founder',
+          content: 'The team at DOJMARK understood our vision perfectly. They delivered a brand identity that truly represents our values and mission.',
+          rating: 5,
+          featured: true,
+          approved: true,
+          sort_order: 2
+        },
+        {
+          id: '3',
+          client_name: 'Marcus Thompson',
+          company: 'TechForward Solutions',
+          role: 'Owner',
+          content: 'Working with DOJMARK was the best business decision I made this year. Their expertise in digital strategy is unmatched.',
+          rating: 5,
+          featured: true,
+          approved: true,
+          sort_order: 3
+        }
+      ];
+      
+      let result = mockTestimonials;
+      if (featured === 'true') {
+        result = result.filter(item => item.featured);
+      }
+      if (limit) {
+        result = result.slice(0, parseInt(limit));
+      }
+      
+      return NextResponse.json(result);
+    }
+    
+    const supabaseAdmin = getSupabaseAdmin();
     let query = supabaseAdmin
       .from('testimonials')
       .select('*')
@@ -30,7 +83,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching testimonials:', error);
+    // Error fetching testimonials
     return NextResponse.json(
       { error: 'Failed to fetch testimonials' },
       { status: 500 }
@@ -50,6 +103,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // If Supabase is not configured, return a mock success response
+    if (!isSupabaseConfigured()) {
+      // Testimonial submission (demo mode)
+      return NextResponse.json(
+        { message: 'Testimonial submitted successfully (demo mode)', data: { id: 'demo-id', client_name, company, role, content, rating, approved: false } },
+        { status: 201 }
+      );
+    }
+
+    const supabaseAdmin = getSupabaseAdmin();
     const { data, error } = await supabaseAdmin
       .from('testimonials')
       .insert([
@@ -71,7 +134,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error('Error creating testimonial:', error);
+    // Error creating testimonial
     return NextResponse.json(
       { error: 'Failed to create testimonial' },
       { status: 500 }
