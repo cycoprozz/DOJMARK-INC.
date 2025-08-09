@@ -244,34 +244,93 @@ function QuotePageContent() {
         utm_campaign: searchParams?.get('utm_campaign') || '',
       };
 
-      const response = await fetch('/api/quote', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submissionData),
-      });
+      // Import Supabase client for direct database submission
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        'https://smtwxamyxcxhxpjumoau.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtdHd4YW15eGN4aHhwanVtb2F1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3MTg5MTUsImV4cCI6MjA3MDI5NDkxNX0.Ph4UQy4tCVOp-gNoT8e1cBPXOeQODIcS3wqbBI769g0'
+      );
 
-      const result = await response.json();
+      // First, upsert the lead (find existing by email or create new)
+      const { data: existingLead, error: leadSearchError } = await supabase
+        .from('leads')
+        .select('id')
+        .eq('email', submissionData.email)
+        .maybeSingle();
 
-      if (response.ok && result.ok) {
-        setSubmitStatus('success');
-        // Track conversion
-        if (typeof window !== 'undefined' && 'gtag' in window) {
-          (window as any).gtag('event', 'quote_submitted', {
-            service: formData.service,
-            budget_range: formData.budget_range,
-            timeline: formData.timeline,
-            value: getBudgetValue(formData.budget_range),
-          });
-        }
-        // Redirect to thank you page
-        setTimeout(() => {
-          router.push(`/thank-you?qid=${result.quote_id}`);
-        }, 2000);
+      let leadId: string;
+
+      if (existingLead) {
+        // Update existing lead
+        const { data: updatedLead, error: updateError } = await supabase
+          .from('leads')
+          .update({
+            full_name: submissionData.full_name,
+            phone: submissionData.phone || null,
+            company: submissionData.company || null,
+            source: submissionData.source,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existingLead.id)
+          .select('id')
+          .single();
+
+        if (updateError) throw updateError;
+        leadId = updatedLead.id;
       } else {
-        throw new Error(result.message || 'Failed to submit quote request');
+        // Create new lead
+        const { data: newLead, error: createError } = await supabase
+          .from('leads')
+          .insert({
+            full_name: submissionData.full_name,
+            email: submissionData.email,
+            phone: submissionData.phone || null,
+            company: submissionData.company || null,
+            source: submissionData.source,
+          })
+          .select('id')
+          .single();
+
+        if (createError) throw createError;
+        leadId = newLead.id;
       }
+
+      // Create the quote
+      const { data: quote, error: quoteError } = await supabase
+        .from('quotes')
+        .insert({
+          lead_id: leadId,
+          service_slug: submissionData.service,
+          project_type: submissionData.project_type,
+          budget_range: submissionData.budget_range,
+          timeline: submissionData.timeline,
+          scope_details: submissionData.scope_details,
+          assets_ready: submissionData.assets_ready,
+          ref_links: submissionData.ref_links,
+          source: submissionData.source,
+          status: 'new',
+        })
+        .select('id')
+        .single();
+
+      if (quoteError) throw quoteError;
+
+      setSubmitStatus('success');
+      
+      // Track conversion
+      if (typeof window !== 'undefined' && 'gtag' in window) {
+        (window as any).gtag('event', 'quote_submitted', {
+          service: formData.service,
+          budget_range: formData.budget_range,
+          timeline: formData.timeline,
+          value: getBudgetValue(formData.budget_range),
+        });
+      }
+      
+      // Redirect to thank you page
+      setTimeout(() => {
+        router.push(`/thank-you?qid=${quote.id}`);
+      }, 2000);
     } catch (error) {
       console.error('Quote submission error:', error);
       setSubmitStatus('error');
