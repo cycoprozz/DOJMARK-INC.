@@ -8,6 +8,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
+  themeColor: '#0A2740',
 };
 
 export const metadata: Metadata = {
@@ -15,6 +16,16 @@ export const metadata: Metadata = {
   description: "Empowering Black-owned businesses with cutting-edge digital solutions that drive measurable growth. Web development, content creation, photography, videography, and brand identity services.",
   keywords: ["DOJMARK", "digital marketing", "web development", "content creation", "photography", "videography", "brand identity", "Black-owned business", "Atlanta", "result-driven marketing"],
   authors: [{ name: "DOJMARK Digital Marketing Team" }],
+  icons: {
+    icon: [
+      { url: "/favicon-32.png", sizes: "32x32" },
+      { url: "/favicon.ico" }
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180" }
+    ],
+  },
+  manifest: "/manifest.webmanifest",
   openGraph: {
     title: "DOJMARK - Result-Driven Digital Marketing",
     description: "Cutting-edge digital solutions that drive measurable growth for Black-owned businesses",
