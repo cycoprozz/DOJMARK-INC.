@@ -7,11 +7,15 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false, // Enable TypeScript error checking
   },
   reactStrictMode: true, // Enable React Strict Mode for better development
-  output: 'export',
-  trailingSlash: true,
+  
+  // Remove static export - enable API routes
+  // output: 'export', // REMOVED - incompatible with API routes
+  // trailingSlash: true, // REMOVED - incompatible with API routes
+  
   images: {
     unoptimized: true,
   },
+  
   webpack: (config, { dev }) => {
     if (dev) {
       // 禁用 webpack 的热模块替换
@@ -21,12 +25,14 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
+  
   eslint: {
     ignoreDuringBuilds: false, // Enable ESLint error checking
   },
 
   // Enable compression
   compress: true,
+  
   // Performance optimizations
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],

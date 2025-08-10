@@ -1,17 +1,25 @@
 [build]
-  publish = "out"
   command = "npm ci && npm run build"
 
 [build.environment]
   NODE_VERSION = "18"
   NPM_VERSION = "9"
 
+# Use Next.js plugin for proper API route support
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# API routes redirect for static export fallback
+[[redirects]]
+  from = "/api/*"
+  to = "/api-not-available.html"
+  status = 200
+
+# Fallback for client-side routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-# Environment contexts removed to allow devDependencies during build
 
 # Headers for security and performance
 [[headers]]
