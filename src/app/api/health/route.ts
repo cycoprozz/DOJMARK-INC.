@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
-
-export const dynamic = 'force-static';
-export const revalidate = false;
+import { NextResponse } from 'next/server';
 
 export async function GET() {
-  return NextResponse.json({ message: "Good!" });
+  return NextResponse.json({
+    ok: true,
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0'
+  });
 }

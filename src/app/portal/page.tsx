@@ -1,141 +1,262 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
 import { 
+  LogOut, 
+  User, 
   FolderOpen, 
-  CreditCard, 
   MessageSquare, 
-  Calendar,
-  TrendingUp,
-  FileText,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  User,
+  FileText, 
   Settings,
-  LogOut,
-  Bell,
-  Search,
-  ArrowRight
+  Plus,
+  Calendar,
+  DollarSign,
+  CheckCircle,
+  Clock,
+  AlertCircle
 } from 'lucide-react';
 
-export default function PortalDashboard() {
-  const [selectedCard, setSelectedCard] = useState<string | null>(null);
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  service_type: string;
+  status: string;
+  budget_range: string;
+  timeline: string;
+  created_at: string;
+  updated_at: string;
+  deliverables: Deliverable[];
+}
 
-  const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('dojmark-session');
-      window.location.href = '/portal/login';
+interface Deliverable {
+  id: string;
+  title: string;
+  status: string;
+  due_date: string;
+}
+
+interface UserProfile {
+  id: string;
+  email: string;
+  company_name?: string;
+  phone?: string;
+}
+
+export default function PortalDashboard() {
+  const router = useRouter();
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'overview' | 'projects' | 'messages' | 'profile'>('overview');
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseKey) {
+        throw new Error('Configuration error');
+      }
+
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      // Get current user
+      const { data: { user: currentUser }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !currentUser) {
+        throw new Error('User not found');
+      }
+
+      setUser({
+        id: currentUser.id,
+        email: currentUser.email || '',
+        company_name: currentUser.user_metadata?.company_name,
+        phone: currentUser.user_metadata?.phone
+      });
+
+      // Get user's projects
+      const { data: projectsData, error: projectsError } = await supabase
+        .from('projects')
+        .select(`
+          id,
+          title,
+          description,
+          service_type,
+          status,
+          budget_range,
+          timeline,
+          created_at,
+          updated_at,
+          deliverables (
+            id,
+            title,
+            status,
+            due_date
+          )
+        `)
+        .eq('user_id', currentUser.id)
+        .order('updated_at', { ascending: false });
+
+      if (projectsError) {
+        console.error('Projects fetch error:', projectsError);
+      } else {
+        setProjects(projectsData || []);
+      }
+
+    } catch (error) {
+      console.error('Dashboard load error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Mock data - will be replaced with Supabase queries
-  const dashboardData = {
-    projects: [
-      { id: 1, name: 'Brand Redesign', stage: 'Design', progress: 65, dueDate: '2024-01-15' },
-      { id: 2, name: 'Website Development', stage: 'Build', progress: 40, dueDate: '2024-02-01' }
-    ],
-    invoices: [
-      { id: 1, amount: 2500, status: 'pending', dueDate: '2024-01-10' },
-      { id: 2, amount: 1800, status: 'paid', dueDate: '2024-01-05' }
-    ],
-    files: [
-      { id: 1, name: 'Logo_Final_v3.svg', type: 'design', uploadDate: '2024-01-08' },
-      { id: 2, name: 'Brand_Guidelines.pdf', type: 'document', uploadDate: '2024-01-07' }
-    ],
-    messages: [
-      { id: 1, from: 'Sarah Johnson', message: 'Logo looks great! Small revision needed...', time: '2 hours ago' },
-      { id: 2, from: 'DOJMARK Team', message: 'Project milestone completed', time: '1 day ago' }
-    ]
+  const handleSignOut = async () => {
+    try {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseKey) {
+        throw new Error('Configuration error');
+      }
+
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      await supabase.auth.signOut();
+      
+      router.push('/portal/login');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
   };
 
-  const openSidecar = (cardType: string) => {
-    setSelectedCard(cardType);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed': return 'text-green-500';
+      case 'in_progress': return 'text-blue-500';
+      case 'review': return 'text-yellow-500';
+      case 'pending': return 'text-gray-500';
+      default: return 'text-gray-500';
+    }
   };
 
-  const closeSidecar = () => {
-    setSelectedCard(null);
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'completed': return <CheckCircle className="w-4 h-4" />;
+      case 'in_progress': return <Clock className="w-4 h-4" />;
+      case 'review': return <AlertCircle className="w-4 h-4" />;
+      case 'pending': return <Clock className="w-4 h-4" />;
+      default: return <Clock className="w-4 h-4" />;
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #0F2C55 0%, #1E2026 50%, #0a1f3d 100%)'
+      }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          borderRadius: '20px',
+          padding: '40px',
+          textAlign: 'center'
+        }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            border: '3px solid rgba(255, 255, 255, 0.3)',
+            borderTop: '3px solid #F46A25',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 20px'
+          }} />
+          <p style={{ color: '#ffffff', fontSize: '16px' }}>Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="portal-container portal-gradient" style={{
+    <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #f8f9fa 0%, #e6e9f0 100%)',
-      position: 'relative',
-      width: '100%',
-      overflow: 'hidden'
+      background: 'linear-gradient(135deg, #0F2C55 0%, #1E2026 50%, #0a1f3d 100%)',
+      color: '#ffffff'
     }}>
       {/* Header */}
       <header style={{
-        background: 'rgba(255, 255, 255, 0.98)',
-        backdropFilter: 'blur(30px)',
-        WebkitBackdropFilter: 'blur(30px)',
-        borderBottom: '1px solid rgba(15, 44, 85, 0.15)',
-        padding: '20px 0',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        boxShadow: '0 2px 20px rgba(15, 44, 85, 0.1)'
+        background: 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        padding: '20px 0'
       }}>
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
           padding: '0 20px',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}>
-          <div style={{display: 'flex', alignItems: 'center', gap: '20px'}}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             <img 
-              src="/dojmark-main-logo.png" 
+              src="/dojmark-logo.svg" 
               alt="DOJMARK" 
               style={{
                 height: '40px',
-                width: 'auto'
+                width: 'auto',
+                filter: 'brightness(0) invert(1)'
               }}
             />
             <h1 style={{
               fontSize: '24px',
-              fontWeight: '700',
-              color: '#0F2C55',
-              fontFamily: 'Poppins, sans-serif',
-              margin: 0
+              fontWeight: '600',
+              fontFamily: 'Poppins, sans-serif'
             }}>
               Client Portal
             </h1>
           </div>
-
-          <div style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
-            <button style={{
-              background: 'none',
-              border: 'none',
-              color: '#0F2C55',
-              cursor: 'pointer',
-              padding: '8px'
-            }}>
-              <Bell className="w-5 h-5" />
-            </button>
-            <button style={{
-              background: 'none',
-              border: 'none',
-              color: '#0F2C55',
-              cursor: 'pointer',
-              padding: '8px'
-            }}>
-              <Settings className="w-5 h-5" />
-            </button>
-            <button 
-              onClick={handleLogout}
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <span style={{ fontSize: '14px', opacity: 0.8 }}>
+              {user?.email}
+            </span>
+            <button
+              onClick={handleSignOut}
               style={{
-                background: 'none',
-                border: 'none',
-                color: '#0F2C55',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#ffffff',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                fontSize: '14px',
                 cursor: 'pointer',
-                padding: '8px'
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
               }}
             >
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-4 h-4" />
+              Sign Out
             </button>
           </div>
         </div>
@@ -147,611 +268,545 @@ export default function PortalDashboard() {
         margin: '0 auto',
         padding: '40px 20px'
       }}>
-        {/* Welcome Section */}
-        <div style={{marginBottom: '40px'}}>
-          <h2 style={{
-            fontSize: '32px',
-            fontWeight: '700',
-            color: '#1E2026',
-            fontFamily: 'Poppins, sans-serif',
-            marginBottom: '8px'
-          }}>
-            Welcome back, John!
-          </h2>
-          <p style={{
-            fontSize: '16px',
-            color: '#666666',
-            fontFamily: 'Inter, sans-serif'
-          }}>
-            Here's what's happening with your projects.
-          </p>
-        </div>
-
-        {/* Dashboard Grid */}
-        <div className="container-mobile" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '12px'
+        {/* Navigation Tabs */}
+        <nav style={{
+          display: 'flex',
+          gap: '10px',
+          marginBottom: '40px',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          paddingBottom: '20px'
         }}>
-          {/* Project Status Card */}
-          <div 
-            onClick={() => openSidecar('projects')}
-            style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(30px)',
-              WebkitBackdropFilter: 'blur(30px)',
-              border: '1px solid rgba(15, 44, 85, 0.15)',
-              borderRadius: '20px',
-              padding: '30px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 15px 40px rgba(15, 44, 85, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)';
-              e.currentTarget.style.boxShadow = '0 20px 40px rgba(15, 44, 85, 0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 10px 30px rgba(15, 44, 85, 0.1)';
-            }}
-          >
-            <div style={{display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px'}}>
-              <div style={{
-                background: 'linear-gradient(135deg, #0F2C55 0%, #22C4FF 100%)',
-                borderRadius: '12px',
-                padding: '12px',
+          {[
+            { id: 'overview', label: 'Overview', icon: <FolderOpen className="w-4 h-4" /> },
+            { id: 'projects', label: 'Projects', icon: <FileText className="w-4 h-4" /> },
+            { id: 'messages', label: 'Messages', icon: <MessageSquare className="w-4 h-4" /> },
+            { id: 'profile', label: 'Profile', icon: <User className="w-4 h-4" /> }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              style={{
+                background: activeTab === tab.id ? '#F46A25' : 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#ffffff',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                fontSize: '14px',
+                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <FolderOpen className="w-6 h-6" style={{color: '#ffffff'}} />
-              </div>
-              <div>
-                <h3 style={{
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#1E2026',
-                  fontFamily: 'Poppins, sans-serif',
-                  margin: 0,
-                  marginBottom: '4px'
-                }}>
-                  Active Projects
-                </h3>
-                <p style={{
-                  fontSize: '14px',
-                  color: '#666666',
-                  fontFamily: 'Inter, sans-serif',
-                  margin: 0
-                }}>
-                  {dashboardData.projects.length} in progress
-                </p>
-              </div>
-            </div>
+                gap: '8px',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== tab.id) {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== tab.id) {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                }
+              }}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
+        </nav>
 
-            <div style={{display: 'flex', flexDirection: 'column', gap: '15px'}}>
-              {dashboardData.projects.map((project) => (
-                <div key={project.id} style={{
-                  background: 'rgba(15, 44, 85, 0.05)',
-                  borderRadius: '12px',
-                  padding: '15px'
+        {/* Tab Content */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '20px',
+          padding: '40px'
+        }}>
+          {activeTab === 'overview' && (
+            <div>
+              <h2 style={{
+                fontSize: '28px',
+                fontWeight: '600',
+                marginBottom: '30px',
+                fontFamily: 'Poppins, sans-serif'
+              }}>
+                Welcome back, {user?.company_name || user?.email?.split('@')[0]}!
+              </h2>
+              
+              {/* Stats Grid */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '20px',
+                marginBottom: '40px'
+              }}>
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  textAlign: 'center'
                 }}>
-                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
-                    <span style={{
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      color: '#1E2026',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      {project.name}
-                    </span>
-                    <span style={{
-                      fontSize: '12px',
-                      color: '#F46A25',
-                      fontWeight: '500',
-                      background: 'rgba(244, 106, 37, 0.1)',
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      {project.stage}
-                    </span>
+                  <FolderOpen className="w-8 h-8" style={{ margin: '0 auto 12px', opacity: 0.8 }} />
+                  <div style={{ fontSize: '32px', fontWeight: '700', marginBottom: '8px' }}>
+                    {projects.length}
                   </div>
-                  <div style={{
-                    background: 'rgba(15, 44, 85, 0.1)',
-                    borderRadius: '8px',
-                    height: '6px',
-                    overflow: 'hidden'
-                  }}>
-                    <div style={{
-                      background: 'linear-gradient(135deg, #F46A25 0%, #22C4FF 100%)',
-                      height: '100%',
-                      width: `${project.progress}%`,
-                      transition: 'width 0.3s ease'
-                    }} />
-                  </div>
+                  <div style={{ fontSize: '14px', opacity: 0.8 }}>Total Projects</div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Invoices Card */}
-          <div 
-            onClick={() => openSidecar('invoices')}
-            style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(30px)',
-              WebkitBackdropFilter: 'blur(30px)',
-              border: '1px solid rgba(244, 106, 37, 0.25)',
-              borderRadius: '20px',
-              padding: '30px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 15px 40px rgba(244, 106, 37, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)';
-              e.currentTarget.style.boxShadow = '0 20px 40px rgba(244, 106, 37, 0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 10px 30px rgba(244, 106, 37, 0.1)';
-            }}
-          >
-            <div style={{display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px'}}>
-              <div style={{
-                background: 'linear-gradient(135deg, #F46A25 0%, #E55A1F 100%)',
-                borderRadius: '12px',
-                padding: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <CreditCard className="w-6 h-6" style={{color: '#ffffff'}} />
-              </div>
-              <div>
-                <h3 style={{
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#1E2026',
-                  fontFamily: 'Poppins, sans-serif',
-                  margin: 0,
-                  marginBottom: '4px'
+                
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  textAlign: 'center'
                 }}>
-                  Invoices
-                </h3>
-                <p style={{
-                  fontSize: '14px',
-                  color: '#666666',
-                  fontFamily: 'Inter, sans-serif',
-                  margin: 0
-                }}>
-                  {dashboardData.invoices.filter(i => i.status === 'pending').length} pending
-                </p>
-              </div>
-            </div>
-
-            <div style={{display: 'flex', flexDirection: 'column', gap: '15px'}}>
-              {dashboardData.invoices.slice(0, 2).map((invoice) => (
-                <div key={invoice.id} style={{
-                  background: 'rgba(244, 106, 37, 0.05)',
-                  borderRadius: '12px',
-                  padding: '15px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <div>
-                    <span style={{
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      color: '#1E2026',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      ${invoice.amount.toLocaleString()}
-                    </span>
-                    <p style={{
-                      fontSize: '12px',
-                      color: '#666666',
-                      fontFamily: 'Inter, sans-serif',
-                      margin: 0
-                    }}>
-                      Due {invoice.dueDate}
-                    </p>
+                  <Clock className="w-8 h-8" style={{ margin: '0 auto 12px', opacity: 0.8 }} />
+                  <div style={{ fontSize: '32px', fontWeight: '700', marginBottom: '8px' }}>
+                    {projects.filter(p => p.status === 'in_progress').length}
                   </div>
-                  <span style={{
-                    fontSize: '12px',
-                    color: invoice.status === 'paid' ? '#22C4FF' : '#F46A25',
-                    fontWeight: '500',
-                    background: invoice.status === 'paid' ? 'rgba(34, 196, 255, 0.1)' : 'rgba(244, 106, 37, 0.1)',
-                    padding: '4px 8px',
-                    borderRadius: '6px',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    {invoice.status}
-                  </span>
+                  <div style={{ fontSize: '14px', opacity: 0.8 }}>Active Projects</div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Files Card */}
-          <div 
-            onClick={() => openSidecar('files')}
-            style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(30px)',
-              WebkitBackdropFilter: 'blur(30px)',
-              border: '1px solid rgba(34, 196, 255, 0.25)',
-              borderRadius: '20px',
-              padding: '30px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 15px 40px rgba(34, 196, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)';
-              e.currentTarget.style.boxShadow = '0 20px 40px rgba(34, 196, 255, 0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 10px 30px rgba(34, 196, 255, 0.1)';
-            }}
-          >
-            <div style={{display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px'}}>
-              <div style={{
-                background: 'linear-gradient(135deg, #22C4FF 0%, #0F2C55 100%)',
-                borderRadius: '12px',
-                padding: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <FileText className="w-6 h-6" style={{color: '#ffffff'}} />
-              </div>
-              <div>
-                <h3 style={{
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#1E2026',
-                  fontFamily: 'Poppins, sans-serif',
-                  margin: 0,
-                  marginBottom: '4px'
+                
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  textAlign: 'center'
                 }}>
-                  Latest Files
-                </h3>
-                <p style={{
-                  fontSize: '14px',
-                  color: '#666666',
-                  fontFamily: 'Inter, sans-serif',
-                  margin: 0
-                }}>
-                  {dashboardData.files.length} new uploads
-                </p>
-              </div>
-            </div>
-
-            <div style={{display: 'flex', flexDirection: 'column', gap: '15px'}}>
-              {dashboardData.files.map((file) => (
-                <div key={file.id} style={{
-                  background: 'rgba(34, 196, 255, 0.05)',
-                  borderRadius: '12px',
-                  padding: '15px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <div>
-                    <span style={{
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      color: '#1E2026',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      {file.name}
-                    </span>
-                    <p style={{
-                      fontSize: '12px',
-                      color: '#666666',
-                      fontFamily: 'Inter, sans-serif',
-                      margin: 0
-                    }}>
-                      {file.uploadDate}
-                    </p>
+                  <CheckCircle className="w-8 h-8" style={{ margin: '0 auto 12px', opacity: 0.8 }} />
+                  <div style={{ fontSize: '32px', fontWeight: '700', marginBottom: '8px' }}>
+                    {projects.filter(p => p.status === 'completed').length}
                   </div>
-                  <span style={{
-                    fontSize: '12px',
-                    color: '#22C4FF',
-                    fontWeight: '500',
-                    background: 'rgba(34, 196, 255, 0.1)',
-                    padding: '4px 8px',
-                    borderRadius: '6px',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    {file.type}
-                  </span>
+                  <div style={{ fontSize: '14px', opacity: 0.8 }}>Completed</div>
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
 
-          {/* Messages Card */}
-          <div 
-            onClick={() => openSidecar('messages')}
-            style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(30px)',
-              WebkitBackdropFilter: 'blur(30px)',
-              border: '1px solid rgba(30, 32, 38, 0.15)',
-              borderRadius: '20px',
-              padding: '30px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 15px 40px rgba(30, 32, 38, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)';
-              e.currentTarget.style.boxShadow = '0 20px 40px rgba(30, 32, 38, 0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 10px 30px rgba(30, 32, 38, 0.1)';
-            }}
-          >
-            <div style={{display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px'}}>
-              <div style={{
-                background: 'linear-gradient(135deg, #1E2026 0%, #0F2C55 100%)',
-                borderRadius: '12px',
-                padding: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
+              {/* Recent Projects */}
+              <h3 style={{
+                fontSize: '20px',
+                fontWeight: '600',
+                marginBottom: '20px',
+                fontFamily: 'Poppins, sans-serif'
               }}>
-                <MessageSquare className="w-6 h-6" style={{color: '#ffffff'}} />
-              </div>
-              <div>
-                <h3 style={{
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#1E2026',
-                  fontFamily: 'Poppins, sans-serif',
-                  margin: 0,
-                  marginBottom: '4px'
+                Recent Projects
+              </h3>
+              
+              {projects.length === 0 ? (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '60px 20px',
+                  opacity: 0.7
                 }}>
-                  Messages
-                </h3>
-                <p style={{
-                  fontSize: '14px',
-                  color: '#666666',
-                  fontFamily: 'Inter, sans-serif',
-                  margin: 0
-                }}>
-                  {dashboardData.messages.length} new messages
-                </p>
-              </div>
-            </div>
-
-            <div style={{display: 'flex', flexDirection: 'column', gap: '15px'}}>
-              {dashboardData.messages.map((message) => (
-                <div key={message.id} style={{
-                  background: 'rgba(30, 32, 38, 0.05)',
-                  borderRadius: '12px',
-                  padding: '15px'
-                }}>
-                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
-                    <span style={{
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      color: '#1E2026',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      {message.from}
-                    </span>
-                    <span style={{
-                      fontSize: '12px',
-                      color: '#666666',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      {message.time}
-                    </span>
-                  </div>
-                  <p style={{
-                    fontSize: '13px',
-                    color: '#666666',
-                    fontFamily: 'Inter, sans-serif',
-                    margin: 0,
-                    lineHeight: '1.4'
-                  }}>
-                    {message.message}
+                  <FolderOpen className="w-16 h-16" style={{ margin: '0 auto 20px', opacity: 0.5 }} />
+                  <p style={{ fontSize: '18px', marginBottom: '12px' }}>No projects yet</p>
+                  <p style={{ fontSize: '14px', opacity: 0.8 }}>
+                    Your projects will appear here once they're created.
                   </p>
                 </div>
-              ))}
+              ) : (
+                <div style={{
+                  display: 'grid',
+                  gap: '16px'
+                }}>
+                  {projects.slice(0, 3).map(project => (
+                    <div
+                      key={project.id}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                      }}
+                    >
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '12px'
+                      }}>
+                        <h4 style={{
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          marginBottom: '4px'
+                        }}>
+                          {project.title}
+                        </h4>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          fontSize: '12px',
+                          opacity: 0.8
+                        }}>
+                          {getStatusIcon(project.status)}
+                          <span className={getStatusColor(project.status)}>
+                            {project.status.replace('_', ' ')}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <p style={{
+                        fontSize: '14px',
+                        opacity: 0.8,
+                        marginBottom: '12px'
+                      }}>
+                        {project.description}
+                      </p>
+                      
+                      <div style={{
+                        display: 'flex',
+                        gap: '16px',
+                        fontSize: '12px',
+                        opacity: 0.7
+                      }}>
+                        <span>Service: {project.service_type.replace('_', ' ')}</span>
+                        <span>Budget: {project.budget_range}</span>
+                        <span>Timeline: {project.timeline}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        </div>
-      </main>
+          )}
 
-      {/* Sidecar/Modal Overlay */}
-      {selectedCard && (
-        <div 
-          className="z-modal"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.5)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            zIndex: 1200,
-            display: 'flex',
-            justifyContent: 'flex-end'
-          }}
-          onClick={closeSidecar}
-        >
-          {/* Sidecar Panel - Full Screen on Mobile */}
-          <div 
-            style={{
-              width: window.innerWidth <= 640 ? '100vw' : '600px',
-              maxWidth: window.innerWidth <= 640 ? '100vw' : '90vw',
-              height: '100%',
-              background: 'rgba(255, 255, 255, 0.98)',
-              backdropFilter: 'blur(40px)',
-              WebkitBackdropFilter: 'blur(40px)',
-              boxShadow: window.innerWidth <= 640 
-                ? '0 -10px 40px rgba(0, 0, 0, 0.3)' 
-                : '-15px 0 40px rgba(0, 0, 0, 0.3), inset 1px 0 0 rgba(255, 255, 255, 0.2)',
-              padding: window.innerWidth <= 640 ? '20px' : '40px',
-              overflowY: 'auto',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              borderLeft: window.innerWidth <= 640 ? 'none' : '1px solid rgba(15, 44, 85, 0.1)',
-              borderRadius: window.innerWidth <= 640 ? '0' : '0',
-              transform: window.innerWidth <= 640 ? 'translateY(0)' : 'translateX(0)',
-              animation: window.innerWidth <= 640 ? 'slideUpIn 0.3s ease-out' : 'slideLeftIn 0.3s ease-out'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '30px'
-            }}>
-              <h2 style={{
-                fontSize: '24px',
-                fontWeight: '700',
-                color: '#1E2026',
-                fontFamily: 'Poppins, sans-serif',
-                margin: 0
-              }}>
-                {selectedCard === 'projects' && 'Project Details'}
-                {selectedCard === 'invoices' && 'Invoice Management'}
-                {selectedCard === 'files' && 'File Browser'}
-                {selectedCard === 'messages' && 'Message Center'}
-              </h2>
-              <button
-                onClick={closeSidecar}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '24px',
-                  color: '#666666',
-                  cursor: 'pointer'
-                }}
-              >
-                ×
-              </button>
-            </div>
-
-            {/* Sidecar Content */}
+          {activeTab === 'projects' && (
             <div>
-              <p style={{
-                fontSize: '16px',
-                color: '#666666',
-                fontFamily: 'Inter, sans-serif',
-                lineHeight: '1.6'
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '30px'
               }}>
-                Detailed {selectedCard} information will be displayed here. This sidecar provides 
-                comprehensive management tools for your {selectedCard}.
-              </p>
-              
-              <div style={{marginTop: '30px'}}>
-                <Link 
-                  href={`/portal/${selectedCard}`}
+                <h2 style={{
+                  fontSize: '28px',
+                  fontWeight: '600',
+                  fontFamily: 'Poppins, sans-serif'
+                }}>
+                  All Projects
+                </h2>
+                <button
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    background: 'linear-gradient(135deg, #F46A25 0%, #E55A1F 100%)',
+                    background: '#F46A25',
                     color: '#ffffff',
-                    padding: '12px 24px',
-                    borderRadius: '12px',
-                    textDecoration: 'none',
+                    border: 'none',
+                    padding: '12px 20px',
+                    borderRadius: '8px',
                     fontSize: '14px',
                     fontWeight: '600',
-                    fontFamily: 'Inter, sans-serif',
-                    transition: 'all 0.3s ease'
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 10px 30px rgba(244, 106, 37, 0.4)';
+                    e.currentTarget.style.background = '#E55A1F';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.background = '#F46A25';
                   }}
                 >
-                  Open Full {selectedCard}
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
+                  <Plus className="w-4 h-4" />
+                  New Project
+                </button>
+              </div>
+
+              {projects.length === 0 ? (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '60px 20px',
+                  opacity: 0.7
+                }}>
+                  <FolderOpen className="w-16 h-16" style={{ margin: '0 auto 20px', opacity: 0.5 }} />
+                  <p style={{ fontSize: '18px', marginBottom: '12px' }}>No projects yet</p>
+                  <p style={{ fontSize: '14px', opacity: 0.8 }}>
+                    Get started by creating your first project.
+                  </p>
+                </div>
+              ) : (
+                <div style={{
+                  display: 'grid',
+                  gap: '16px'
+                }}>
+                  {projects.map(project => (
+                    <div
+                      key={project.id}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        padding: '24px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                      }}
+                    >
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '16px'
+                      }}>
+                        <div>
+                          <h4 style={{
+                            fontSize: '18px',
+                            fontWeight: '600',
+                            marginBottom: '8px'
+                          }}>
+                            {project.title}
+                          </h4>
+                          <p style={{
+                            fontSize: '14px',
+                            opacity: 0.8,
+                            marginBottom: '12px'
+                          }}>
+                            {project.description}
+                          </p>
+                        </div>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          fontSize: '14px',
+                          opacity: 0.8
+                        }}>
+                          {getStatusIcon(project.status)}
+                          <span className={getStatusColor(project.status)}>
+                            {project.status.replace('_', ' ')}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                        gap: '12px',
+                        fontSize: '13px',
+                        opacity: 0.7
+                      }}>
+                        <div>
+                          <strong>Service:</strong> {project.service_type.replace('_', ' ')}
+                        </div>
+                        <div>
+                          <strong>Budget:</strong> {project.budget_range}
+                        </div>
+                        <div>
+                          <strong>Timeline:</strong> {project.timeline}
+                        </div>
+                        <div>
+                          <strong>Created:</strong> {new Date(project.created_at).toLocaleDateString()}
+                        </div>
+                      </div>
+
+                      {project.deliverables && project.deliverables.length > 0 && (
+                        <div style={{
+                          marginTop: '16px',
+                          paddingTop: '16px',
+                          borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+                        }}>
+                          <h5 style={{
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            marginBottom: '8px',
+                            opacity: 0.8
+                          }}>
+                            Deliverables ({project.deliverables.length})
+                          </h5>
+                          <div style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '8px'
+                          }}>
+                            {project.deliverables.map(deliverable => (
+                              <span
+                                key={deliverable.id}
+                                style={{
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  fontSize: '12px',
+                                  opacity: 0.8
+                                }}
+                              >
+                                {deliverable.title}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'messages' && (
+            <div>
+              <h2 style={{
+                fontSize: '28px',
+                fontWeight: '600',
+                marginBottom: '30px',
+                fontFamily: 'Poppins, sans-serif'
+              }}>
+                Messages
+              </h2>
+              
+              <div style={{
+                textAlign: 'center',
+                padding: '60px 20px',
+                opacity: 0.7
+              }}>
+                <MessageSquare className="w-16 h-16" style={{ margin: '0 auto 20px', opacity: 0.5 }} />
+                <p style={{ fontSize: '18px', marginBottom: '12px' }}>No messages yet</p>
+                <p style={{ fontSize: '14px', opacity: 0.8 }}>
+                  Messages from your project team will appear here.
+                </p>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* Mobile CSS */}
-      <style jsx>{`
-        @media (max-width: 768px) {
-          /* Mobile header */
-          header > div {
-            padding: 0 15px !important;
-          }
-          
-          h1 {
-            font-size: 20px !important;
-          }
-          
-          h2 {
-            font-size: 24px !important;
-          }
-          
-          /* Mobile dashboard grid */
-          main > div:last-of-type {
-            grid-template-columns: 1fr !important;
-            gap: 20px !important;
-          }
-          
-          /* Mobile cards */
-          div[style*="padding:30px"] {
-            padding: 20px !important;
-          }
-          
-          /* Mobile sidecar */
-          div[style*="width:600px"] {
-            width: 100% !important;
-            padding: 30px 20px !important;
-          }
-          
-          /* Mobile buttons */
-          div[style*="gap:15px"] > button {
-            font-size: 12px !important;
-            padding: 10px 16px !important;
-          }
-          
-          /* Mobile typography adjustments */
-          h3 {
-            font-size: 16px !important;
-          }
-          
-          div[style*="fontSize:18px"] {
-            font-size: 16px !important;
-          }
-          
-          div[style*="fontSize:16px"] {
-            font-size: 14px !important;
-          }
-        }
-      `}</style>
+          {activeTab === 'profile' && (
+            <div>
+              <h2 style={{
+                fontSize: '28px',
+                fontWeight: '600',
+                marginBottom: '30px',
+                fontFamily: 'Poppins, sans-serif'
+              }}>
+                Profile Settings
+              </h2>
+              
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '24px',
+                marginBottom: '24px'
+              }}>
+                <h3 style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  marginBottom: '20px'
+                }}>
+                  Account Information
+                </h3>
+                
+                <div style={{
+                  display: 'grid',
+                  gap: '16px'
+                }}>
+                  <div>
+                    <label style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      marginBottom: '8px',
+                      opacity: 0.8
+                    }}>
+                      Email Address
+                    </label>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px 16px',
+                      fontSize: '14px'
+                    }}>
+                      {user?.email}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      marginBottom: '8px',
+                      opacity: 0.8
+                    }}>
+                      Company Name
+                    </label>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px 16px',
+                      fontSize: '14px'
+                    }}>
+                      {user?.company_name || 'Not specified'}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      marginBottom: '8px',
+                      opacity: 0.8
+                    }}>
+                      Phone Number
+                    </label>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px 16px',
+                      fontSize: '14px'
+                    }}>
+                      {user?.phone || 'Not specified'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <button
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: '#ffffff',
+                  padding: '12px 20px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
+              >
+                <Settings className="w-4 h-4" />
+                Edit Profile
+              </button>
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 }
