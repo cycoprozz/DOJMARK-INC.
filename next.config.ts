@@ -23,6 +23,15 @@ const nextConfig: NextConfig = {
         ignored: ['**/*'], // 忽略所有文件变化
       };
     }
+    
+    // Suppress critical dependency warnings from Supabase
+    config.ignoreWarnings = [
+      {
+        module: /node_modules\/@supabase\/realtime-js/,
+        message: /Critical dependency: the request of a dependency is an expression/,
+      },
+    ];
+    
     return config;
   },
   
