@@ -539,7 +539,10 @@ p, .body-text {
 }
 
 .portfolio-item img {
-  @apply w-full h-full object-cover transition-transform duration-500;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
 }
 
 .portfolio-item:hover img {
@@ -549,26 +552,29 @@ p, .body-text {
 /* Responsive breakpoints */
 @media (max-width: 768px) {
   .glass-card {
-    @apply p-4;
+    padding: 1rem;
   }
   
   .glass-modal {
-    @apply p-6;
+    padding: 1.5rem;
   }
   
   .sidecar {
-    @apply w-full;
+    width: 100%;
   }
 }
 
 /* Loading states */
 .loading {
-  @apply animate-pulse bg-dojmark-light-gray rounded;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  background-color: var(--dojmark-light-gray);
+  border-radius: 0.25rem;
 }
 
 /* Focus states for accessibility */
 .focus-visible {
-  @apply outline-none ring-2 ring-dojmark-accent-blue ring-offset-2;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--dojmark-accent-blue), 0 0 0 4px white;
 }
 
 /* Print styles */
