@@ -154,12 +154,13 @@ warn  - It seems like you don't have a global error handler set up. It is recomm
 }
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/edge-server-development/0.pack.gz_' -> '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/edge-server-development/0.pack.gz'
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/server-development/0.pack.gz_' -> '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/server-development/0.pack.gz'
-000
-}
-<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/edge-server-development/0.pack.gz_' -> '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/edge-server-development/0.pack.gz'
-<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/server-development/0.pack.gz_' -> '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/server-development/0.pack.gz'
- about the `instrumentation-client.ts` file: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation-client
-Server startup error: [Error:   [31mx[0m Unexpected eo ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+[@sentry/nextjs] Could not find `onRequestError` hook in instrumentation file. This indicates outdated configuration of the Sentry SDK. Use `Sentry.captureRequestError` to instrument the `onRequestError` hook: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#errors-from-nested-react-server-components
+warn  - It seems like you don't have a global error handler set up. It is recommended that you add a global-error.js file with Sentry instrumentation so that React rendering errors are reported to Sentry. Read more: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#react-render-er[@sentry/nextjs] Could not find `onRequestError` hook in instrumentation file. This indicates outdated configuration of the Sentry SDK. Use `Sentry.captureRequestError` to instrument the `onRequestError` hook: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#errors-from-nested-react-server-components
+warn  - It seems like you don't have a global error handler set up. It is recommended that you add a global-error.js file with Sentry instrumentation so that React rendering ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 33.5s (1010 modules)
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
     at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
   code: 'EADDRINUSE',
   errno: -48,
@@ -168,14 +169,33 @@ Server startup error: [Error:   [31mx[0m Unexpected eo ⨯ uncaughtException: 
   port: 3000
 }
  ⨯ uncaughtException:  Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
-    at <unknown> (Error: listen EADDRIN[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] starting `npx tsx server.ts`[39m
-[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] starting `npx tsx server.ts`[39m
-[@sentry/nextjs] Could not find `onRequestError` hook in instrumentation file. This indicates outdated configuration of the Sentry SDK. Use `Sentry.captureRequestError` to instrument the `onRequestError` hook: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#errors-from-nested-react-server-components
-warn  - It seems like you don't have a global error handler set up. It is recommended that you add a global-error.js file with Sentry instrumentation so that React rendering errors are reported to Sentry. Read more: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#react-render-errors-in-app-router (you can suppress this warning by setting SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING=1 as environment variable)
-[@sentry/nextjs] DEPRECATION WARNING: It is recommended renaming your `sentry.client.config.ts` file, or moving its content to `instrumentation-client.ts`. When using Turbopack `sentry.client.config.ts` will no longer work. Read more about the `instrumentation-client.ts` file: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation-client
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+on-client
+ ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 31.8s (1010 modules)
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+ ⨯ uncaughtException:  Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+n-client.ts` file: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation-client
  ○ Compiling /instrumentation ...
  ✓ Compiled /instrumentation in 71.7s (1010 modules)
  ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
@@ -195,15 +215,19 @@ warn  - It seems like you don't have a global error handler set up. It is recomm
   port: 3000
 }
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/server-development/0.pack.gz_' -> '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/server-development/0.pack.gz'
-e: 'EADDRINUSE',
-  errno: -48,
-  syscall: 'listen',
-  address: '0.0.0.0',
-  port: 3000
-}
-<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/edge-server-development/0.pack.gz_' -> '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/edge-server-development/0.pack.gz'
-<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/server-development/0.pack.gz_' -> '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/server-development/0.pack.gz'
- so that React rendering errors are reported to Sentry. Read more: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#react-render-errors-in-app-router (you can suppress this warning by setting SENTRY_SUPPRESS_GL ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+[@sentry/nextjs] Could not find `onRequestError` hook in instrumentation file. This indicates outdated configuration of the Sentry SDK. Use `Sentry.captureRequestError` to instrument the `onRequestError` hook: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#errors-from-nested-react-server-components
+warn  - It seems like you don't have a global error handler set up. It is recommended that you add a global-error.js file with Sentry instrumentation so that React rendering errors are reported to Sentry. Read more: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#react-render-errors-in-app-router (you can suppress this warning by setting SENTRY_SUPPRESS_GLOBAL[@sentry/nextjs] Could not find `onRequestError` hook in instrumentation file. This indicates outdated configuration of the Sentry SDK. Use `Sentry.captureRequestError` to instrument the `onRequestError` hook: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#errors-from-nested-react-server-components
+warn  - It seems like you don't have a global error handler set up. It is recommended that ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 35s (1010 modules)
+> Ready on http://0.0.0.0:3000
+> Socket.IO server running at ws://0.0.0.0:3000/api/socketio
+js/manual-setup/#react-render-errors-in-app-router (you can suppress this warning by setting SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING=1 as environment variable)
+[@sentry/nextjs] DEPRECATION WARNING: It is recommended renaming your `sentry.client.config.ts` file, or moving its content to `instrumentation-client.ts`. When using Turbopack `sentry.client.config.ts` will no longer work. Read more about the `instrumentation-client.ts` file: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation-client
+ ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 32.2s (1010 modules)
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
     at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
   code: 'EADDRINUSE',
   errno: -48,
@@ -219,14 +243,7 @@ e: 'EADDRINUSE',
   address: '0.0.0.0',
   port: 3000
 }
-[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] starting `npx tsx server.ts`[39m
-[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] starting `npx tsx server.ts`[39m
-[@sentry/nextjs] Could not find `onRequestError` hook in instrumentation file. This indicates outdated configuration of the Sentry SDK. Use `Sentry.captureRequestError` to instrument the `onRequestError` hook: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#errors-from-nested-react-server-components
-warn  - It seems like you don't have a global error handler set up. It is recommended that you add a global-error.js file with Sentry instrumentation so that React rendering errors are reported to Sentry. Read more: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#react-render-errors-in-app-router (you can suppress this warning by setting SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING=1 as environment variable)
-[@sentry/nextjs] DEPRECATION WARNING: It is recommended renaming your `sentry.client.config.ts` file, or moving its content to `instrumentation-client.ts`. When using Turbopack `sentry.client.config.ts` will no longer work. Read more about the `instrumentation-client.ts` file: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation-client
+sentry.client.config.ts` file, or moving its content to `instrumentation-client.ts`. When using Turbopack `sentry.client.config.ts` will no longer work. Read more about the `instrumentation-client.ts` file: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation-client
  ○ Compiling /instrumentation ...
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/client-development/0.pack.gz_' -> '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/client-development/0.pack.gz'
  ✓ Compiled /instrumentation in 61.4s (1010 modules)
@@ -248,7 +265,18 @@ warn  - It seems like you don't have a global error handler set up. It is recomm
 }
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/edge-server-development/0.pack.gz_' -> '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/edge-server-development/0.pack.gz'
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/server-development/0.pack.gz_' -> '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/server-development/0.pack.gz'
-listen',
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `npx tsx server.ts`[39m
+[@sentry/nextjs] Could not find `onRequestError` hook in instrumentation file. This indicates outdated configuration of the Sentry SDK. Use `Sentry.captureRequestError` to instrument the `onRequestError` hook: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#errors-from-nested-react-server-components
+warn  - It seems like you don't have a global error handler set up. It is recommended that you add a global-error.js file with Sentry instrumentation so that React rendering errors are reported to Sentry. Read more: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#react-render-errors-in-app-router (you can suppress this warning by setting SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING=1 as environment variable)
+[@sentry/nextjs] DEPRECATION WARNING: It is recommended renaming your `sentry.client.config.ts` file, or moving its content to `instrumentation-client.ts`. When using Turbopack `sentry.client.config.ts` will no longer work. Read more about the `instrumentation-client.ts` file: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation-client
+ ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 32.3s (1010 modules)
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
   address: '0.0.0.0',
   port: 3000
 }
@@ -260,11 +288,25 @@ listen',
   address: '0.0.0.0',
   port: 3000
 }
-<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/edge-server-development/0.pack.gz_' -> '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/edge-server-development/0.pack.gz'
-<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/server-development/0.pack.gz_' -> '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/server-development/0.pack.gz'
-.ts` file, or moving its content to `instrumentation-client.ts`. When using Turbopack `sentry.client.config.ts` will no longer work. Read more about the `instrumentation-client.ts` file: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation-client
+ instrumentation file. This indicates outdated configuration of the Sentry SDK. Use `Sentry.captureRequestError` to instrument the `onRequestError` hook: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#errors-from-nested-react-server-components
+warn  - It seems like you don't have a global ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 32s (1010 modules)
+ ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+ ⨯ uncaughtException:  Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+rk. Read more about the `instrumentation-client.ts` file: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation-client
  ○ Compiling /instrumentation ...
-<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/client-development/0.pack.gz_' -> '/Users/user/Documents/GitHub/DOJMARK-INC./.next/cache/webpack/client-development/0.pack.gz'
- ✓ Compiled /instrumentation in 61s (1010 modules)
-> Ready on http://0.0.0.0:3000
-> Socket.IO server running at ws://0.0.0.0:3000/api/socketio
+ ✓ Compiled /instrumentation in 36.6s (1010 modules)
