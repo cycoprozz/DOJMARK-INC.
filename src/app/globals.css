@@ -478,9 +478,29 @@ p, .body-text {
 
 /* Sidecar/Modal specific styles */
 .sidecar {
-  @apply fixed right-0 top-0 h-full w-full md:w-96 lg:w-[28rem] glass-modal z-50;
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
   transform: translateX(100%);
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 50;
+}
+
+@media (min-width: 768px) {
+  .sidecar {
+    width: 24rem; /* md:w-96 */
+  }
+}
+
+@media (min-width: 1024px) {
+  .sidecar {
+    width: 28rem; /* lg:w-[28rem] */
+  }
 }
 
 .sidecar.open {

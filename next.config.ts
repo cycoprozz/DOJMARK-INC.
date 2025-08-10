@@ -16,11 +16,6 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   
-  // Enable instrumentation hook for Sentry
-  experimental: {
-    instrumentationHook: true,
-  },
-  
   webpack: (config, { dev }) => {
     if (dev) {
       // 禁用 webpack 的热模块替换
