@@ -37,6 +37,12 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
+
+  // Suppress Sentry warnings during build
+  env: {
+    SENTRY_SUPPRESS_INSTRUMENTATION_FILE_WARNING: '1',
+    SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING: '1',
+  },
 };
 
 export default withSentryConfig(nextConfig, {

@@ -92,9 +92,9 @@ export default function FilesPage() {
 
   const getFileIcon = (type: string) => {
     switch (type) {
-      case 'design': return <Image className="w-5 h-5" />;
-      case 'video': return <Video className="w-5 h-5" />;
-      default: return <FileText className="w-5 h-5" />;
+      case 'design': return <Image className="w-5 h-5" alt="Design file" />;
+      case 'video': return <Video className="w-5 h-5" alt="Video file" />;
+      default: return <FileText className="w-5 h-5" alt="Document file" />;
     }
   };
 

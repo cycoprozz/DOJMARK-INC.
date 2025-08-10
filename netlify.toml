@@ -2,8 +2,8 @@
   command = "npm ci && npm run build"
 
 [build.environment]
-  NODE_VERSION = "18"
-  NPM_VERSION = "9"
+  NODE_VERSION = "20"
+  NPM_VERSION = "10"
 
 # Use Next.js plugin for proper API route support
 [[plugins]]
