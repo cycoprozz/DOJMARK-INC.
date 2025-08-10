@@ -31,12 +31,14 @@ export default function PortalLayout({
 
     const checkAuth = async () => {
       try {
+        console.log('🔍 Starting auth check...');
+        
         // Validate environment variables first
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
         const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
         if (!supabaseUrl || !supabaseKey) {
-          console.error('Missing Supabase environment variables');
+          console.error('❌ Missing Supabase environment variables');
           throw new Error('Authentication service not configured');
         }
 
@@ -44,20 +46,22 @@ export default function PortalLayout({
         const supabase = createClient(supabaseUrl, supabaseKey);
         
         // Check authentication status with timeout
-        const authPromise = supabase.auth.getSession();
-        
-        const { data: { session }, error } = await authPromise;
+        console.log('🔐 Checking session...');
+        const { data: { session }, error } = await supabase.auth.getSession();
 
         if (isAborted) return; // Component unmounted
 
         if (error) {
+          console.error('❌ Session check error:', error);
           throw error;
         }
 
         const isAuthenticated = !!session;
+        console.log('✅ Auth check complete:', { isAuthenticated, userId: session?.user?.id });
 
         // If not authenticated and not on login page, redirect
         if (!isAuthenticated && pathname !== '/portal/login' && pathname !== '/portal/signup' && pathname !== '/portal/reset') {
+          console.log('🔄 Redirecting to login...');
           router.replace('/portal/login');
           return;
         }
@@ -70,7 +74,7 @@ export default function PortalLayout({
         });
 
       } catch (error: any) {
-        console.error('Auth check failed:', error);
+        console.error('❌ Auth check failed:', error);
         
         if (isAborted) return;
 
@@ -88,10 +92,10 @@ export default function PortalLayout({
       }
     };
 
-    // Set up timeout to prevent infinite loading
+    // Set up timeout to prevent infinite loading (reduced to 6 seconds)
     timeoutId = setTimeout(() => {
       if (!isAborted) {
-        console.warn('Auth check timed out after 10 seconds');
+        console.warn('⏰ Auth check timed out after 6 seconds');
         setAuthState(prev => ({
           ...prev,
           isLoading: false,
@@ -104,7 +108,7 @@ export default function PortalLayout({
           router.replace('/portal/login');
         }
       }
-    }, 10000); // 10 second timeout
+    }, 6000); // 6 second timeout
 
     checkAuth();
 
@@ -210,22 +214,67 @@ export default function PortalLayout({
           }}>
             {authState.hasTimedOut ? 'Connection timeout' : 'Authentication error'}
           </p>
-          <button
-            onClick={() => router.replace('/portal/login')}
-            style={{
-              background: '#F46A25',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              fontFamily: 'Inter, sans-serif'
-            }}
-          >
-            Go to Login
-          </button>
+          <p style={{
+            color: 'rgba(255, 255, 255, 0.7)',
+            fontSize: '14px',
+            fontFamily: 'Inter, sans-serif',
+            marginBottom: '20px'
+          }}>
+            {authState.error || 'Please try again or contact support.'}
+          </p>
+          <div style={{
+            display: 'flex',
+            gap: '12px',
+            justifyContent: 'center',
+            flexWrap: 'wrap'
+          }}>
+            <button
+              onClick={() => window.location.reload()}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                fontFamily: 'Inter, sans-serif',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+              }}
+            >
+              Retry
+            </button>
+            <button
+              onClick={() => router.replace('/portal/login')}
+              style={{
+                background: '#F46A25',
+                color: 'white',
+                border: 'none',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                fontFamily: 'Inter, sans-serif',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#E55A1F';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#F46A25';
+              }}
+            >
+              Sign In
+            </button>
+          </div>
         </div>
       </div>
     );
