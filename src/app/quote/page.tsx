@@ -244,23 +244,37 @@ function QuotePageContent() {
         utm_campaign: searchParams?.get('utm_campaign') || '',
       };
 
+      // Validate environment first
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseKey) {
+        throw new Error('Database configuration missing. Please contact support.');
+      }
+
       // Import Supabase client for direct database submission
       const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        'https://smtwxamyxcxhxpjumoau.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtdHd4YW15eGN4aHhwanVtb2F1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3MTg5MTUsImV4cCI6MjA3MDI5NDkxNX0.Ph4UQy4tCVOp-gNoT8e1cBPXOeQODIcS3wqbBI769g0'
-      );
+      const supabase = createClient(supabaseUrl, supabaseKey);
 
-      // First, upsert the lead (find existing by email or create new)
+      console.log('🚀 Starting quote submission for:', submissionData.email);
+
+      // Step 1: Check if lead exists
+      console.log('🔍 Checking for existing lead...');
       const { data: existingLead, error: leadSearchError } = await supabase
         .from('leads')
         .select('id')
         .eq('email', submissionData.email)
         .maybeSingle();
 
+      if (leadSearchError) {
+        console.error('❌ Lead search error:', leadSearchError);
+        throw new Error('Database connection failed. Please try again.');
+      }
+
       let leadId: string;
 
       if (existingLead) {
+        console.log('📝 Updating existing lead:', existingLead.id);
         // Update existing lead
         const { data: updatedLead, error: updateError } = await supabase
           .from('leads')
@@ -275,9 +289,14 @@ function QuotePageContent() {
           .select('id')
           .single();
 
-        if (updateError) throw updateError;
+        if (updateError) {
+          console.error('❌ Lead update error:', updateError);
+          throw new Error('Failed to update contact information. Please try again.');
+        }
         leadId = updatedLead.id;
+        console.log('✅ Lead updated successfully');
       } else {
+        console.log('➕ Creating new lead...');
         // Create new lead
         const { data: newLead, error: createError } = await supabase
           .from('leads')
@@ -291,11 +310,27 @@ function QuotePageContent() {
           .select('id')
           .single();
 
-        if (createError) throw createError;
+        if (createError) {
+          console.error('❌ Lead creation error:', createError);
+          
+          // Check if it's a RLS policy issue
+          if (createError.code === '42501' || createError.message?.includes('row-level security')) {
+            throw new Error('Database permissions error. Please contact support.');
+          }
+          
+          // Check if it's a validation issue
+          if (createError.code === '23505') {
+            throw new Error('This email is already in use. Please contact support.');
+          }
+          
+          throw new Error('Failed to save contact information. Please try again.');
+        }
         leadId = newLead.id;
+        console.log('✅ Lead created successfully:', leadId);
       }
 
-      // Create the quote
+      // Step 2: Create the quote
+      console.log('📋 Creating quote for lead:', leadId);
       const { data: quote, error: quoteError } = await supabase
         .from('quotes')
         .insert({
@@ -313,7 +348,23 @@ function QuotePageContent() {
         .select('id')
         .single();
 
-      if (quoteError) throw quoteError;
+      if (quoteError) {
+        console.error('❌ Quote creation error:', quoteError);
+        
+        // Check if it's a RLS policy issue
+        if (quoteError.code === '42501' || quoteError.message?.includes('row-level security')) {
+          throw new Error('Database permissions error. Please contact support.');
+        }
+        
+        // Check if it's a foreign key constraint
+        if (quoteError.code === '23503') {
+          throw new Error('Data relationship error. Please contact support.');
+        }
+        
+        throw new Error('Failed to save quote request. Please try again.');
+      }
+
+      console.log('✅ Quote created successfully:', quote.id);
 
       setSubmitStatus('success');
       
@@ -331,8 +382,27 @@ function QuotePageContent() {
       setTimeout(() => {
         router.push(`/thank-you?qid=${quote.id}`);
       }, 2000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Quote submission error:', error);
+      
+      // Log the detailed error for debugging
+      console.error('Error details:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        stack: error.stack
+      });
+      
+      // Set user-friendly error message
+      let userMessage = 'There was an error submitting your quote request. Please try again or contact us directly.';
+      
+      if (error.message && !error.message.includes('row-level security')) {
+        userMessage = error.message;
+      }
+      
+      // Show user-friendly error
+      alert(userMessage);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
