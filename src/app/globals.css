@@ -58,25 +58,79 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  @apply text-4xl md:text-5xl lg:text-6xl;
+  font-size: 2.25rem; /* text-4xl */
+  line-height: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 3rem; /* md:text-5xl */
+    line-height: 1;
+  }
+}
+
+@media (min-width: 1024px) {
+  h1 {
+    font-size: 3.75rem; /* lg:text-6xl */
+    line-height: 1;
+  }
 }
 
 h2 {
-  @apply text-3xl md:text-4xl lg:text-5xl;
+  font-size: 1.875rem; /* text-3xl */
+  line-height: 2.25rem;
+}
+
+@media (min-width: 768px) {
+  h2 {
+    font-size: 2.25rem; /* md:text-4xl */
+    line-height: 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  h2 {
+    font-size: 3rem; /* lg:text-5xl */
+    line-height: 1;
+  }
 }
 
 h3 {
-  @apply text-2xl md:text-3xl;
+  font-size: 1.5rem; /* text-2xl */
+  line-height: 2rem;
+}
+
+@media (min-width: 768px) {
+  h3 {
+    font-size: 1.875rem; /* md:text-3xl */
+    line-height: 2.25rem;
+  }
 }
 
 h4 {
-  @apply text-xl md:text-2xl;
+  font-size: 1.25rem; /* text-xl */
+  line-height: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  h4 {
+    font-size: 1.5rem; /* md:text-2xl */
+    line-height: 2rem;
+  }
 }
 
 p, .body-text {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
-  @apply text-base md:text-lg;
+  font-size: 1rem; /* text-base */
+  line-height: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  p, .body-text {
+    font-size: 1.125rem; /* md:text-lg */
+    line-height: 1.75rem;
+  }
 }
 
 /* DOJMARK Brand Classes */
@@ -1000,4 +1054,5 @@ button, a, [role="button"] {
   to {
     opacity: 1;
   }
+}
 }

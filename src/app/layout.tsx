@@ -1,15 +1,20 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Analytics } from '@vercel/analytics/react';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+};
 
 export const metadata: Metadata = {
   title: "DOJMARK - Result-Driven Digital Marketing",
   description: "Empowering Black-owned businesses with cutting-edge digital solutions that drive measurable growth. Web development, content creation, photography, videography, and brand identity services.",
   keywords: ["DOJMARK", "digital marketing", "web development", "content creation", "photography", "videography", "brand identity", "Black-owned business", "Atlanta", "result-driven marketing"],
   authors: [{ name: "DOJMARK Digital Marketing Team" }],
-  viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
   openGraph: {
     title: "DOJMARK - Result-Driven Digital Marketing",
     description: "Cutting-edge digital solutions that drive measurable growth for Black-owned businesses",
