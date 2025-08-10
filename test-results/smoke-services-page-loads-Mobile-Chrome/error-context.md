@@ -1,0 +1,185 @@
+# Page snapshot
+
+```yaml
+- banner:
+  - button
+  - link "DOJMARK Digital Marketing":
+    - /url: /
+    - img "DOJMARK Digital Marketing"
+  - link:
+    - /url: /portal
+- img "DOJMARK"
+- button
+- navigation:
+  - list:
+    - listitem:
+      - link "Home":
+        - /url: /
+    - listitem:
+      - link "About":
+        - /url: /about
+    - listitem:
+      - link "Services":
+        - /url: /services
+    - listitem:
+      - link "Portfolio":
+        - /url: /portfolio
+    - listitem:
+      - link "Client Portal":
+        - /url: /portal
+    - listitem:
+      - link "Blog":
+        - /url: /blog
+    - listitem:
+      - link "Contact":
+        - /url: /contact
+- link "Client Login":
+  - /url: /portal/login
+- link "Get Quote":
+  - /url: /quote
+- link "Get Quote":
+  - /url: /quote
+- main:
+  - link "Home":
+    - /url: /
+  - text: /Services
+  - heading "Digital Solutions That Work" [level=1]
+  - heading "Our Services" [level=2]
+  - paragraph: Comprehensive digital solutions designed to elevate your brand and drive measurable growth.
+  - heading "Web Development" [level=3]
+  - text: Digital Foundations
+  - paragraph: Custom websites and web applications built with cutting-edge technology for optimal performance and user experience.
+  - list:
+    - listitem: Responsive Design
+    - listitem: E-commerce Solutions
+    - listitem: CMS Integration
+    - listitem: Performance Optimization
+  - text: From $2,500
+  - link "Get Quote":
+    - /url: /quote?service=web-development
+  - heading "Brand Identity" [level=3]
+  - text: Visual Excellence
+  - paragraph: Complete brand identity systems that capture your essence and resonate with your target audience.
+  - list:
+    - listitem: Logo Design
+    - listitem: Brand Guidelines
+    - listitem: Color Palettes
+    - listitem: Typography Systems
+  - text: From $1,800
+  - link "Get Quote":
+    - /url: /quote?service=web-development
+  - heading "Photography" [level=3]
+  - text: Visual Storytelling
+  - paragraph: Professional photography services that showcase your brand, products, and story with stunning visual impact.
+  - list:
+    - listitem: Product Photography
+    - listitem: Event Coverage
+    - listitem: Portrait Sessions
+    - listitem: Commercial Shoots
+  - text: From $500
+  - link "Get Quote":
+    - /url: /quote?service=web-development
+  - heading "Videography" [level=3]
+  - text: Motion Graphics
+  - paragraph: Dynamic video content that engages audiences and drives action across all digital platforms.
+  - list:
+    - listitem: Promotional Videos
+    - listitem: Social Media Content
+    - listitem: Documentary Style
+    - listitem: Animation
+  - text: From $1,200
+  - link "Get Quote":
+    - /url: /quote?service=web-development
+  - heading "Digital Strategy" [level=3]
+  - text: Growth Planning
+  - paragraph: Comprehensive digital strategies that align with your business goals and drive measurable results.
+  - list:
+    - listitem: Market Analysis
+    - listitem: SEO Strategy
+    - listitem: Content Planning
+    - listitem: Performance Tracking
+  - text: From $800
+  - link "Get Quote":
+    - /url: /quote?service=web-development
+  - heading "Content Creation" [level=3]
+  - text: Engaging Stories
+  - paragraph: Compelling content that tells your story, engages your audience, and builds lasting connections.
+  - list:
+    - listitem: Social Media Content
+    - listitem: Blog Writing
+    - listitem: Email Campaigns
+    - listitem: Copy Writing
+  - text: From $600
+  - link "Get Quote":
+    - /url: /quote?service=web-development
+  - heading "Our Process" [level=2]
+  - paragraph: A proven methodology that ensures successful project delivery and exceptional results.
+  - text: "01"
+  - heading "Discovery" [level=3]
+  - paragraph: Deep dive into your business, goals, and target audience to create a solid foundation.
+  - text: "02"
+  - heading "Strategy" [level=3]
+  - paragraph: Develop a comprehensive plan tailored to your specific needs and objectives.
+  - text: "03"
+  - heading "Design" [level=3]
+  - paragraph: Create stunning visuals and user experiences that capture your brand essence.
+  - text: "04"
+  - heading "Development" [level=3]
+  - paragraph: Build and implement solutions using cutting-edge technology and best practices.
+  - text: "05"
+  - heading "Launch" [level=3]
+  - paragraph: Deploy your project with comprehensive testing and quality assurance.
+  - text: "06"
+  - heading "Growth" [level=3]
+  - paragraph: Monitor, optimize, and scale your solution for continued success and growth.
+  - heading "Ready to Transform Your Business?" [level=2]
+  - paragraph: Let's discuss your project and create a custom solution that drives real results.
+  - link "Start Your Project":
+    - /url: /quote
+  - link "View Our Work":
+    - /url: /portfolio
+- contentinfo:
+  - link "DOJMARK":
+    - /url: /
+    - img "DOJMARK"
+  - paragraph: Result-driven digital marketing solutions that empower Black-owned businesses to thrive in the digital landscape.
+  - link "Ig.":
+    - /url: https://www.instagram.com/cycoprozz
+  - link "Tw.":
+    - /url: "#"
+  - link "Li.":
+    - /url: "#"
+  - heading "Services" [level=3]
+  - list:
+    - listitem:
+      - link "Web Development":
+        - /url: /services
+    - listitem:
+      - link "Brand Identity":
+        - /url: /services
+    - listitem:
+      - link "Content Creation":
+        - /url: /services
+    - listitem:
+      - link "Digital Strategy":
+        - /url: /services
+    - listitem:
+      - link "Photography":
+        - /url: /services
+    - listitem:
+      - link "Videography":
+        - /url: /services
+  - heading "Get in Touch" [level=3]
+  - text: hello@dojmark.com Atlanta, GA, USA Available for consultation
+  - link "Start Project":
+    - /url: /quote
+  - paragraph: © 2024 DOJMARK. All rights reserved. Empowering Black excellence through digital innovation.
+- region "Notifications (F8)":
+  - list
+- alert
+- button "Open Next.js Dev Tools":
+  - img
+- button "Open issues overlay": 1 Issue
+- button "Collapse issues badge":
+  - img
+```

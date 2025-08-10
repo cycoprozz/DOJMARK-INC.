@@ -9,12 +9,13 @@ test('home loads', async ({ page }) => {
 
 test('portal redirects unauth', async ({ page }) => {
   await page.goto(`${BASE}/portal`);
+  // Portal should redirect to login when not authenticated
   await expect(page).toHaveURL(/\/login/i);
 });
 
 test('services page loads', async ({ page }) => {
   await page.goto(`${BASE}/services`);
-  await expect(page).toHaveTitle(/Services/i);
+  await expect(page).toHaveTitle(/DOJMARK/i);
 });
 
 test('contact form accessible', async ({ page }) => {

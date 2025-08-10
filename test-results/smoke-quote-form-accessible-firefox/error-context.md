@@ -1,0 +1,131 @@
+# Page snapshot
+
+```yaml
+- banner:
+  - button
+  - link "DOJMARK Digital Marketing":
+    - /url: /
+    - img "DOJMARK Digital Marketing"
+  - link:
+    - /url: /portal
+- img "DOJMARK"
+- button
+- navigation:
+  - list:
+    - listitem:
+      - link "Home":
+        - /url: /
+    - listitem:
+      - link "About":
+        - /url: /about
+    - listitem:
+      - link "Services":
+        - /url: /services
+    - listitem:
+      - link "Portfolio":
+        - /url: /portfolio
+    - listitem:
+      - link "Client Portal":
+        - /url: /portal
+    - listitem:
+      - link "Blog":
+        - /url: /blog
+    - listitem:
+      - link "Contact":
+        - /url: /contact
+- link "Client Login":
+  - /url: /portal/login
+- link "Get Quote":
+  - /url: /quote
+- link "Get Quote":
+  - /url: /quote
+- main:
+  - heading "Get Your Project Quote" [level=1]
+  - paragraph: Tell us about your project and we'll provide a detailed proposal tailored to your needs.
+  - heading "Contact Information" [level=3]
+  - text: Full Name *
+  - textbox
+  - text: Email Address *
+  - textbox
+  - text: Phone Number
+  - textbox "+1 (555) 123-4567"
+  - text: Company Name
+  - textbox
+  - heading "Project Details" [level=3]
+  - text: Service Needed *
+  - combobox:
+    - option "Select a service..." [selected]
+  - text: Project Type *
+  - combobox:
+    - option "Select project type..." [selected]
+    - option "Website Development"
+    - option "Photography"
+    - option "Videography"
+    - option "Brand Identity"
+    - option "Content Creation"
+    - option "Other"
+  - text: Budget Range *
+  - combobox:
+    - option "Select budget range..." [selected]
+    - option "Under $1,000"
+    - option "$1,000 - $3,000"
+    - option "$3,000 - $5,000"
+    - option "$5,000 - $10,000"
+    - option "$10,000+"
+  - text: Timeline *
+  - combobox:
+    - option "Select timeline..." [selected]
+    - option "ASAP (Rush project)"
+    - option "2-4 weeks"
+    - option "1-2 months"
+    - option "Flexible timing"
+  - text: Project Requirements & Details *
+  - textbox "Please describe your project in detail. Include any specific requirements, features needed, design preferences, or examples of similar work you admire."
+  - paragraph: 0/1000
+  - checkbox "I have content/assets ready (images, text, branding materials)"
+  - text: I have content/assets ready (images, text, branding materials) Reference Links (Optional)
+  - paragraph: Share links to websites, designs, or examples that inspire your project
+  - textbox "https://example.com"
+  - button "Add another link"
+  - checkbox "I agree to receive marketing communications from DOJMARK about services, updates, and special offers. You can unsubscribe at any time."
+  - text: I agree to receive marketing communications from DOJMARK about services, updates, and special offers. You can unsubscribe at any time.
+  - button "Submit Quote Request"
+- contentinfo:
+  - link "DOJMARK":
+    - /url: /
+    - img "DOJMARK"
+  - paragraph: Result-driven digital marketing solutions that empower Black-owned businesses to thrive in the digital landscape.
+  - link "Ig.":
+    - /url: https://www.instagram.com/cycoprozz
+  - link "Tw.":
+    - /url: "#"
+  - link "Li.":
+    - /url: "#"
+  - heading "Services" [level=3]
+  - list:
+    - listitem:
+      - link "Web Development":
+        - /url: /services
+    - listitem:
+      - link "Brand Identity":
+        - /url: /services
+    - listitem:
+      - link "Content Creation":
+        - /url: /services
+    - listitem:
+      - link "Digital Strategy":
+        - /url: /services
+    - listitem:
+      - link "Photography":
+        - /url: /services
+    - listitem:
+      - link "Videography":
+        - /url: /services
+  - heading "Get in Touch" [level=3]
+  - text: hello@dojmark.com Atlanta, GA, USA Available for consultation
+  - link "Start Project":
+    - /url: /quote
+  - paragraph: © 2024 DOJMARK. All rights reserved. Empowering Black excellence through digital innovation.
+- region "Notifications (F8)":
+  - list
+```
