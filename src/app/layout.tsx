@@ -1,8 +1,23 @@
 import type { Metadata, Viewport } from "next";
+import { Inter, Poppins } from 'next/font/google';
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Analytics } from '@vercel/analytics/react';
+
+// Configure fonts using next/font
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const poppins = Poppins({ 
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-poppins',
+});
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -47,18 +62,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link 
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" 
-          rel="stylesheet"
-        />
-        <noscript>
-          <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-        </noscript>
-      </head>
-      <body className="antialiased">
+      <body className={`${inter.variable} ${poppins.variable} antialiased`}>
         <ErrorBoundary>
           {children}
           <Toaster />

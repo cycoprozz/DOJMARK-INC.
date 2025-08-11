@@ -330,7 +330,7 @@ export default function Home() {
               >
                 Open Client Portal
               </Link>
-            </div>
+              </div>
           </div>
         </div>
       </section>

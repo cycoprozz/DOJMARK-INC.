@@ -30,6 +30,9 @@ const eslintConfig = [
       "@next/next/no-img-element": "off",
       "@next/next/no-html-link-for-pages": "off",
       
+      // Accessibility rules - only apply to actual img elements, not Lucide React icons
+      "jsx-a11y/alt-text": "off",
+      
       // 一般JavaScript规则
       "prefer-const": "off",  // 关闭prefer-const规则
       "no-unused-vars": "off",

@@ -285,7 +285,7 @@ export default function FilesPage() {
                 {file.preview ? (
                   <img 
                     src={file.preview} 
-                    alt={file.name}
+                    alt={`Preview of ${file.name}`}
                     style={{
                       width: '100%',
                       height: '100%',
@@ -520,7 +520,7 @@ export default function FilesPage() {
               {selectedFile.preview ? (
                 <img 
                   src={selectedFile.preview} 
-                  alt={selectedFile.name}
+                  alt={`Preview of ${selectedFile.name}`}
                   style={{
                     maxWidth: '100%',
                     maxHeight: '300px',

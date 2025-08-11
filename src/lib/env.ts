@@ -54,9 +54,13 @@ export function validateEnvironment(): EnvironmentConfig {
     );
   }
 
+  // Use empty strings instead of placeholder URLs to prevent invalid URL errors
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
   return {
-    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-    supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key',
+    supabaseUrl,
+    supabaseAnonKey,
     supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
     nodeEnv,
     isDevelopment,
@@ -71,6 +75,8 @@ export function isEnvironmentConfigured(): boolean {
   try {
     const config = validateEnvironment();
     return (
+      config.supabaseUrl !== '' &&
+      config.supabaseAnonKey !== '' &&
       config.supabaseUrl !== 'https://placeholder.supabase.co' &&
       config.supabaseAnonKey !== 'placeholder-anon-key'
     );

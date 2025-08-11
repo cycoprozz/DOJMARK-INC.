@@ -11,6 +11,7 @@
     "build:netlify": "next build",
     "start": "NODE_ENV=production tsx server.ts 2>&1 | tee server.log",
     "lint": "next lint",
+    "lint:strict": "next lint --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
