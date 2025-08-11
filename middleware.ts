@@ -2,6 +2,17 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
+  // Defensive portal redirect
+  if (request.nextUrl.pathname.startsWith('/portal')) {
+    const hasToken = request.cookies.get('sb-access-token') || request.cookies.get('sb:token');
+    if (!hasToken) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      url.search = `next=${encodeURIComponent(request.nextUrl.pathname)}`;
+      return NextResponse.redirect(url);
+    }
+  }
+
   const response = NextResponse.next()
   
   // Security headers
