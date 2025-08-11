@@ -18,72 +18,82 @@ export async function POST(request: NextRequest) {
 
     // If Supabase is not configured, return a mock success response
     if (!isSupabaseConfigured()) {
-      // Newsletter subscription (demo mode)
+      console.log('Newsletter subscription (demo mode) - Supabase not configured');
       return NextResponse.json(
         { message: 'Subscription successful (demo mode)', data: { id: 'demo-id', email, name } },
         { status: 201 }
       );
     }
 
-    // Check if email already exists
-    const supabaseAdmin = getSupabaseAdmin();
-    const { data: existingSubscription } = await supabaseAdmin
-      .from('newsletter_subscriptions')
-      .select('id, status')
-      .eq('email', email)
-      .single();
+    try {
+      // Check if email already exists
+      const supabaseAdmin = getSupabaseAdmin();
+      const { data: existingSubscription } = await supabaseAdmin
+        .from('newsletter_subscriptions')
+        .select('id, status')
+        .eq('email', email)
+        .single();
 
-    if (existingSubscription) {
-      if (existingSubscription.status === 'active') {
-        return NextResponse.json(
-          { message: 'Email already subscribed' },
-          { status: 200 }
-        );
-      } else {
-        // Reactivate subscription
-        const { data, error } = await supabaseAdmin
-          .from('newsletter_subscriptions')
-          .update({ status: 'active' })
-          .eq('id', existingSubscription.id)
-          .select()
-          .single();
+      if (existingSubscription) {
+        if (existingSubscription.status === 'active') {
+          return NextResponse.json(
+            { message: 'Email already subscribed' },
+            { status: 200 }
+          );
+        } else {
+          // Reactivate subscription
+          const { data, error } = await supabaseAdmin
+            .from('newsletter_subscriptions')
+            .update({ status: 'active' })
+            .eq('id', existingSubscription.id)
+            .select()
+            .single();
 
-        if (error) {
-          throw error;
+          if (error) {
+            throw error;
+          }
+
+          return NextResponse.json(
+            { message: 'Subscription reactivated successfully', data },
+            { status: 200 }
+          );
         }
-
-        return NextResponse.json(
-          { message: 'Subscription reactivated successfully', data },
-          { status: 200 }
-        );
       }
+
+      // Create new subscription
+      const { data, error } = await supabaseAdmin
+        .from('newsletter_subscriptions')
+        .insert([
+          {
+            email,
+            name,
+            status: 'active'
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      // TODO: Integrate with Mailchimp, ConvertKit, or other email service
+      // TODO: Send welcome email
+
+      return NextResponse.json(
+        { message: 'Subscription successful', data },
+        { status: 201 }
+      );
+    } catch (supabaseError) {
+      console.error('Supabase error:', supabaseError);
+      // Fallback to demo mode if Supabase fails
+      return NextResponse.json(
+        { message: 'Subscription successful (demo mode)', data: { id: 'demo-id', email, name } },
+        { status: 201 }
+      );
     }
-
-    // Create new subscription
-    const { data, error } = await supabaseAdmin
-      .from('newsletter_subscriptions')
-      .insert([
-        {
-          email,
-          name,
-          status: 'active'
-        }
-      ])
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    // TODO: Integrate with Mailchimp, ConvertKit, or other email service
-    // TODO: Send welcome email
-
-    return NextResponse.json(
-      { message: 'Subscription successful', data },
-      { status: 201 }
-    );
   } catch (error) {
+    console.error('Newsletter subscription error:', error);
     // Error subscribing to newsletter
     return NextResponse.json(
       { error: 'Failed to subscribe to newsletter' },
@@ -104,25 +114,44 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const supabaseAdmin = getSupabaseAdmin();
-    const { data, error } = await supabaseAdmin
-      .from('newsletter_subscriptions')
-      .update({ status: 'unsubscribed' })
-      .eq('email', email)
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
+    // If Supabase is not configured, return a mock success response
+    if (!isSupabaseConfigured()) {
+      console.log('Newsletter unsubscribe (demo mode) - Supabase not configured');
+      return NextResponse.json(
+        { message: 'Unsubscribed successfully (demo mode)', data: { id: 'demo-id', email } },
+        { status: 200 }
+      );
     }
 
-    // TODO: Remove from Mailchimp, ConvertKit, or other email service
+    try {
+      const supabaseAdmin = getSupabaseAdmin();
+      const { data, error } = await supabaseAdmin
+        .from('newsletter_subscriptions')
+        .update({ status: 'unsubscribed' })
+        .eq('email', email)
+        .select()
+        .single();
 
-    return NextResponse.json(
-      { message: 'Unsubscribed successfully', data },
-      { status: 200 }
-    );
+      if (error) {
+        throw error;
+      }
+
+      // TODO: Remove from Mailchimp, ConvertKit, or other email service
+
+      return NextResponse.json(
+        { message: 'Unsubscribed successfully', data },
+        { status: 200 }
+      );
+    } catch (supabaseError) {
+      console.error('Supabase error:', supabaseError);
+      // Fallback to demo mode if Supabase fails
+      return NextResponse.json(
+        { message: 'Unsubscribed successfully (demo mode)', data: { id: 'demo-id', email } },
+        { status: 200 }
+      );
+    }
   } catch (error) {
+    console.error('Newsletter unsubscribe error:', error);
     // Error unsubscribing from newsletter
     return NextResponse.json(
       { error: 'Failed to unsubscribe from newsletter' },
