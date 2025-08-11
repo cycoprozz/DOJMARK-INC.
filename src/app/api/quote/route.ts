@@ -119,14 +119,17 @@ export async function POST(request: NextRequest) {
 
         if (quoteError) throw quoteError;
 
+        // Get the origin from the request URL
+        const origin = new URL(request.url).origin;
+        
         // Trigger external integrations (CRM, email, etc.)
         await Promise.allSettled([
           // CRM integration
           syncToCRM(validatedData, leadId, quote.id),
           // Email notifications
-          sendEmailNotifications(validatedData, quote.id),
+          sendEmailNotifications(validatedData, quote.id, origin),
           // Internal notifications (Slack, etc.)
-          sendInternalNotifications(validatedData, quote.id),
+          sendInternalNotifications(validatedData, quote.id, request),
         ]);
 
         return NextResponse.json({
@@ -141,10 +144,13 @@ export async function POST(request: NextRequest) {
         // Database error, but still try to send notifications
         const mockQuoteId = `mock-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         
+        // Get the origin from the request URL
+        const origin = new URL(request.url).origin;
+        
         // Send email notifications even if DB fails
         await Promise.allSettled([
-          sendEmailNotifications(validatedData, mockQuoteId),
-          sendInternalNotifications(validatedData, mockQuoteId),
+          sendEmailNotifications(validatedData, mockQuoteId, origin),
+          sendInternalNotifications(validatedData, mockQuoteId, request),
         ]);
 
         return NextResponse.json({
@@ -159,10 +165,13 @@ export async function POST(request: NextRequest) {
       // Supabase not configured - use backup processing
       const mockQuoteId = `demo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
+      // Get the origin from the request URL
+      const origin = new URL(request.url).origin;
+      
       // Send email notifications
       await Promise.allSettled([
-        sendEmailNotifications(validatedData, mockQuoteId),
-        sendInternalNotifications(validatedData, mockQuoteId),
+        sendEmailNotifications(validatedData, mockQuoteId, origin),
+        sendInternalNotifications(validatedData, mockQuoteId, request),
       ]);
 
       return NextResponse.json({
@@ -248,13 +257,13 @@ async function syncToCRM(data: any, leadId: string, quoteId: string) {
 }
 
 // Email Notifications
-async function sendEmailNotifications(data: any, quoteId: string) {
+async function sendEmailNotifications(data: any, quoteId: string, origin: string) {
   try {
     // Client confirmation email
-    await sendClientConfirmationEmail(data, quoteId);
+    await sendClientConfirmationEmail(data, quoteId, origin);
     
     // Internal notification email
-    await sendInternalNotificationEmail(data, quoteId);
+    await sendInternalNotificationEmail(data, quoteId, origin);
     
     return { success: true };
   } catch (error) {
@@ -263,14 +272,14 @@ async function sendEmailNotifications(data: any, quoteId: string) {
   }
 }
 
-async function sendClientConfirmationEmail(data: any, quoteId: string) {
+async function sendClientConfirmationEmail(data: any, quoteId: string, origin: string) {
   // Example: Using SendGrid
   if (process.env.SENDGRID_API_KEY) {
     const emailData = {
       to: data.email,
       from: process.env.FROM_EMAIL || 'hello@dojmark.com',
       subject: 'Quote Request Received - DOJMARK',
-      html: generateClientEmailTemplate(data, quoteId),
+      html: generateClientEmailTemplate(data, quoteId, origin),
     };
 
     const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
@@ -288,7 +297,7 @@ async function sendClientConfirmationEmail(data: any, quoteId: string) {
   }
 }
 
-async function sendInternalNotificationEmail(data: any, quoteId: string) {
+async function sendInternalNotificationEmail(data: any, quoteId: string, origin: string) {
   // Internal team notification
   if (process.env.SENDGRID_API_KEY && process.env.INTERNAL_EMAIL) {
     const emailData = {
@@ -314,8 +323,11 @@ async function sendInternalNotificationEmail(data: any, quoteId: string) {
 }
 
 // Internal Notifications (Slack, Discord, etc.)
-async function sendInternalNotifications(data: any, quoteId: string) {
+async function sendInternalNotifications(data: any, quoteId: string, request: NextRequest) {
   try {
+    // Get the origin from the request URL
+    const origin = new URL(request.url).origin;
+    
     // Slack webhook
     if (process.env.SLACK_WEBHOOK_URL) {
       const slackMessage = {
@@ -344,7 +356,7 @@ async function sendInternalNotifications(data: any, quoteId: string) {
                   type: 'plain_text',
                   text: 'View Quote'
                 },
-                url: `${process.env.NEXT_PUBLIC_SITE_URL}/admin/quotes/${quoteId}`
+                url: `${origin}/admin/quotes/${quoteId}`
               }
             ]
           }
@@ -366,7 +378,7 @@ async function sendInternalNotifications(data: any, quoteId: string) {
 }
 
 // Email Templates
-function generateClientEmailTemplate(data: any, quoteId: string): string {
+function generateClientEmailTemplate(data: any, quoteId: string, origin: string): string {
   return `
 <!DOCTYPE html>
 <html>
@@ -401,11 +413,11 @@ function generateClientEmailTemplate(data: any, quoteId: string): string {
     
     <div style="background: #e8f4fd; padding: 20px; border-radius: 8px; margin: 30px 0;">
       <h3 style="margin: 0 0 10px; color: #0F2C55;">💡 Pro Tip</h3>
-      <p style="margin: 0; color: #666;">While you wait, check out our <a href="${process.env.NEXT_PUBLIC_SITE_URL}/portfolio" style="color: #F46A25;">recent work</a> and follow us on <a href="https://www.instagram.com/cycoprozz" style="color: #F46A25;">Instagram</a> for design inspiration!</p>
+      <p style="margin: 0; color: #666;">While you wait, check out our <a href="${origin}/portfolio" style="color: #F46A25;">recent work</a> and follow us on <a href="https://www.instagram.com/cycoprozz" style="color: #F46A25;">Instagram</a> for design inspiration!</p>
     </div>
     
     <div style="text-align: center; margin: 30px 0;">
-      <a href="${process.env.NEXT_PUBLIC_SITE_URL}/contact" style="background: #F46A25; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 600;">Contact Us</a>
+      <a href="${origin}/contact" style="background: #F46A25; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 600;">Contact Us</a>
     </div>
     
     <hr style="border: none; border-top: 1px solid #e1e5e9; margin: 30px 0;">
@@ -413,7 +425,7 @@ function generateClientEmailTemplate(data: any, quoteId: string): string {
     <p style="color: #666; font-size: 14px; text-align: center; margin: 0;">
       DOJMARK - Empowering Black Excellence Through Digital Innovation<br>
       <a href="mailto:hello@dojmark.com" style="color: #F46A25;">hello@dojmark.com</a> | 
-      <a href="${process.env.NEXT_PUBLIC_SITE_URL}" style="color: #F46A25;">dojmark.com</a>
+      <a href="${origin}" style="color: #F46A25;">dojmark.com</a>
     </p>
   </div>
 </body>
